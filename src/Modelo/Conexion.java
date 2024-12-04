@@ -30,28 +30,5 @@ public class Conexion {
             System.out.println("Error al conectar a la base de datos:"+ e.getMessage());
         }
         return con;
-    }
-    
-    //metodo que cierra una conexion
-    /*public void closeConnection(Connection con)
-    {
-        try
-        {
-            if(con != null && !con.isClosed())
-            {
-                con.close();
-            }
-        }
-        catch(SQLException e)
-        {
-            System.out.println("Error al cerrar la conexión:"+ e.getMessage());
-        }
-    }
-
-    void closeConnection() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }*/
-
-   
+    }  
 }
-

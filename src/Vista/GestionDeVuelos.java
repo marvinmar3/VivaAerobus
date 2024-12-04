@@ -35,8 +35,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         String destino= fDestino.getText();
         String fechaSalidaOriginal = ((JTextField) jDateChooserSalida.getDateEditor().getUiComponent()).getText();
         String horaSalida= fHoraSalida.getText();
-        String fechaLlegadaOriginal= ((JTextField) jDateChooserLlegada.getDateEditor().getUiComponent()).getText();
-        String horaLlegada= fHoraLlegada.getText();
+        String duracion = fDuracion.getText();
         double precio = Double.parseDouble(fPrecio.getText());
         
         
@@ -44,12 +43,11 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         try
         {
             String fechaSalida = FormateadorDeFechas.convertirFecha(fechaSalidaOriginal);
-            String fechaLlegada = FormateadorDeFechas.convertirFecha(fechaLlegadaOriginal);
             
             //guardar el vuelo
             GestorVuelos gestorVuelos = new GestorVuelos();
             
-            gestorVuelos.guardarVuelo(origen, destino, fechaSalida, horaSalida, fechaLlegada, horaLlegada, precio);
+            gestorVuelos.guardarVuelo(origen, destino, fechaSalida, horaSalida, duracion , precio);
             JOptionPane.showMessageDialog(this, "Vuelo guardado con éxito.");
         }
         catch(ParseException e)
@@ -66,8 +64,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         if (fOrigen.getText().isEmpty() || fDestino.getText().isEmpty() || 
         ((JTextField) jDateChooserSalida.getDateEditor().getUiComponent()).getText().isEmpty() || 
         fHoraSalida.getText().isEmpty() || 
-        ((JTextField) jDateChooserLlegada.getDateEditor().getUiComponent()).getText().isEmpty() || 
-        fHoraLlegada.getText().isEmpty() || 
+        fDuracion.getText().isEmpty() || 
         fPrecio.getText().isEmpty()) 
         {
             JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos.");
@@ -97,17 +94,16 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jDateChooserSalida = new com.toedter.calendar.JDateChooser();
-        jDateChooserLlegada = new com.toedter.calendar.JDateChooser();
         fOrigen = new javax.swing.JTextField();
         fDestino = new javax.swing.JTextField();
         fHoraSalida = new javax.swing.JTextField();
-        fHoraLlegada = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         fPrecio = new javax.swing.JTextField();
         bGuardar = new javax.swing.JButton();
+        duracion = new javax.swing.JLabel();
+        fDuracion = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         fOrigen1 = new javax.swing.JTextField();
@@ -147,6 +143,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         fPrecio2 = new javax.swing.JTextField();
         bEliminar = new javax.swing.JButton();
         bSalir = new java.awt.Button();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -180,13 +177,9 @@ public class GestionDeVuelos extends javax.swing.JFrame {
 
         jLabel3.setText("Destino");
 
-        jLabel4.setText("Fecha de Salida");
+        jLabel4.setText("Fecha");
 
-        jLabel5.setText("Hora de Salida");
-
-        jLabel6.setText("Fecha de Llegada");
-
-        jLabel7.setText("Hora de Llegada");
+        jLabel5.setText("Hora");
 
         fOrigen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -210,19 +203,20 @@ public class GestionDeVuelos extends javax.swing.JFrame {
             }
         });
 
+        duracion.setText("Duracion de Vuelo");
+
+        fDuracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fDuracionActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Horas");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(57, 57, 57)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(fHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addGap(69, 69, 69))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,64 +226,72 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addGap(98, 98, 98))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(duracion)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(fDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(7, 7, 7)
+                                .addComponent(jLabel6)))
                         .addGap(18, 18, 18)
-                        .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(bGuardar)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel8))
-                            .addGap(133, 133, 133))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                            .addComponent(jDateChooserLlegada, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(fHoraLlegada, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jDateChooserSalida, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(fPrecio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)))
-                .addContainerGap(67, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(213, 213, 213)
+                        .addComponent(bGuardar))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jDateChooserSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(fHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                .addGap(100, 100, 100)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jDateChooserSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDateChooserLlegada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fHoraLlegada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(43, 43, 43))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(fOrigen)
+                                .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(fHoraSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(63, 63, 63)
+                                .addComponent(bGuardar))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(31, 31, 31)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel8)
+                                    .addComponent(duracion))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(fPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(fDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6))))
+                        .addGap(103, 103, 103))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fOrigen)
-                            .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(bGuardar)
-                .addGap(103, 103, 103))
+                        .addComponent(jDateChooserSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         TabbedGestion.addTab("Nuevo Vuelo", jPanel2);
@@ -583,6 +585,8 @@ public class GestionDeVuelos extends javax.swing.JFrame {
             }
         });
 
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionvuelos.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -604,7 +608,9 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                         .addComponent(TabbedGestion, javax.swing.GroupLayout.PREFERRED_SIZE, 714, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 10, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(36, 36, 36)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -614,14 +620,12 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(bSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(28, 28, 28)
+                    .addComponent(jLabel7)
+                    .addComponent(bSalir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -718,6 +722,10 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_fOrigen1ActionPerformed
 
+    private void fDuracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fDuracionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fDuracionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -763,10 +771,11 @@ public class GestionDeVuelos extends javax.swing.JFrame {
     private javax.swing.JButton bEliminar;
     private javax.swing.JButton bGuardar;
     private java.awt.Button bSalir;
+    private javax.swing.JLabel duracion;
     private javax.swing.JTextField fDestino;
     private javax.swing.JTextField fDestino1;
     private javax.swing.JTextField fDestino2;
-    private javax.swing.JTextField fHoraLlegada;
+    private javax.swing.JTextField fDuracion;
     private javax.swing.JTextField fHoraLlegada1;
     private javax.swing.JTextField fHoraLlegada2;
     private javax.swing.JTextField fHoraSalida;
@@ -786,7 +795,6 @@ public class GestionDeVuelos extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser jDateChooser4;
     private com.toedter.calendar.JDateChooser jDateChooser5;
     private com.toedter.calendar.JDateChooser jDateChooser6;
-    private com.toedter.calendar.JDateChooser jDateChooserLlegada;
     private com.toedter.calendar.JDateChooser jDateChooserSalida;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

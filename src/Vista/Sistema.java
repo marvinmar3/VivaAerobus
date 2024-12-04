@@ -70,7 +70,7 @@ public class Sistema extends javax.swing.JFrame {
         jB_buscarvuelo.setBackground(new java.awt.Color(204, 204, 204));
         jB_buscarvuelo.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_buscarvuelo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/buscarvuelo50.png"))); // NOI18N
-        jB_buscarvuelo.setText("Buscar Vuelo");
+        jB_buscarvuelo.setText("          Buscar Vuelo");
         jB_buscarvuelo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_buscarvueloActionPerformed(evt);
@@ -85,7 +85,7 @@ public class Sistema extends javax.swing.JFrame {
         jB_verdervuelo.setBackground(new java.awt.Color(204, 204, 204));
         jB_verdervuelo.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_verdervuelo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/book50.png"))); // NOI18N
-        jB_verdervuelo.setText("Vender Vuelo");
+        jB_verdervuelo.setText("        Vender Vuelo");
         jB_verdervuelo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_verdervueloActionPerformed(evt);
@@ -94,13 +94,16 @@ public class Sistema extends javax.swing.JFrame {
 
         jB_promociones.setBackground(new java.awt.Color(204, 204, 204));
         jB_promociones.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
-        jB_promociones.setText("Promociones");
+        jB_promociones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/promo2.png"))); // NOI18N
+        jB_promociones.setText("        Promociones");
 
         jB_gestionusuarios.setBackground(new java.awt.Color(204, 204, 204));
         jB_gestionusuarios.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jB_gestionusuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionusuarios.png"))); // NOI18N
         jB_gestionusuarios.setText("Gestion de Usuarios");
 
         jB_cerrarsesion.setBackground(new java.awt.Color(204, 204, 204));
+        jB_cerrarsesion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/cerrarsesion.png"))); // NOI18N
         jB_cerrarsesion.setText("Cerrar Sesión");
         jB_cerrarsesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,6 +113,7 @@ public class Sistema extends javax.swing.JFrame {
 
         jB_gestionusuarios1.setBackground(new java.awt.Color(204, 204, 204));
         jB_gestionusuarios1.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jB_gestionusuarios1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionvuelos.png"))); // NOI18N
         jB_gestionusuarios1.setText("Gestion de Vuelos");
         jB_gestionusuarios1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -176,7 +180,7 @@ public class Sistema extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jB_gestionusuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jB_gestionusuarios1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(114, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 940, 520));

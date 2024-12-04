@@ -4,18 +4,119 @@
  */
 package Vista;
 
+import Modelo.Conexion;
+import Modelo.FormateadorDeFechas;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.Date;
+import javax.swing.table.DefaultTableModel;
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author marvin
  */
 public class BuscarVuelo extends javax.swing.JFrame {
+   
+    private String idVuelo;
+    private String ciudadOrigen;
+    private String ciudadDestino;
+    private String fecha;
+    private String hora;
+    private String precio;
+    
+    // conexion a la bd
+    Conexion conexion = new Conexion();
+    Connection cn= conexion.getConnection();
+    
+    
+    private void mostrarDatos()
+    {
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("ID Vuelo");
+        modelo.addColumn("Origen");
+        modelo.addColumn("Destino");
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Hora");
+        modelo.addColumn("Precio");
+        
+        jTable1.setModel(modelo);
+        
+        String sql = "select id_vuelo, origen, destino, fechaSalida, horaSalida, precio  from vuelos";
+        String[] datos = new String[6];
+        
+        try(Statement st = cn.createStatement();
+        ResultSet rs= st.executeQuery(sql))
+        {
+            while(rs.next())
+            {
+                datos[0]= rs.getString("id_vuelo");
+                datos[0]= rs.getString("origen");
+                datos[0]= rs.getString("destino");
+                datos[0]= rs.getString("fecha");
+                datos[0]= rs.getString("hora");
+                datos[0]= rs.getString("precio");
+                modelo.addRow(datos);
+            }
+            jTable1.setModel(modelo);
+        }
+        catch(SQLException e)
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al obtener los datos: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    // Método para buscar vuelos por filtros
+    private void buscarVuelos(String origen, String destino, String fecha) {
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("ID Vuelo");
+        modelo.addColumn("Origen");
+        modelo.addColumn("Destino");
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Precio");
 
+        jTable1.setModel(modelo);
+
+        String sql = "SELECT * FROM vuelos WHERE origen = ? AND destino = ? AND fecha = ?";
+        String[] datos = new String[5];
+
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, origen);
+            ps.setString(2, destino);
+            ps.setString(3, fecha);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                datos[0] = rs.getString("id_vuelo");
+                datos[1] = rs.getString("origen");
+                datos[2] = rs.getString("destino");
+                datos[3] = rs.getString("fecha");
+                datos[4] = rs.getString("precio");
+                modelo.addRow(datos);
+            }
+
+            if (modelo.getRowCount() == 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron vuelos disponibles.", "Sin resultados", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            jTable1.setModel(modelo);
+
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar vuelos: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     /**
      * Creates new form BuscarVuelo
      */
     public BuscarVuelo() {
         initComponents();
         this.setLocationRelativeTo(null);
+        mostrarDatos();
     }
 
     /**
@@ -32,12 +133,12 @@ public class BuscarVuelo extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        fOrigen = new javax.swing.JTextField();
+        fDestino = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        fFecha = new com.toedter.calendar.JDateChooser();
         jSeparator1 = new javax.swing.JSeparator();
-        jButton2 = new javax.swing.JButton();
+        bBuscar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -64,26 +165,26 @@ public class BuscarVuelo extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("October Devanagari", 1, 18)); // NOI18N
         jLabel3.setText("Destino");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        fOrigen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                fOrigenActionPerformed(evt);
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        fDestino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                fDestinoActionPerformed(evt);
             }
         });
 
         jLabel4.setFont(new java.awt.Font("October Devanagari", 1, 18)); // NOI18N
         jLabel4.setText("Fecha");
 
-        jButton2.setBackground(new java.awt.Color(0, 153, 0));
-        jButton2.setText("Buscar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        bBuscar.setBackground(new java.awt.Color(0, 153, 0));
+        bBuscar.setText("Buscar");
+        bBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                bBuscarActionPerformed(evt);
             }
         });
 
@@ -91,15 +192,20 @@ public class BuscarVuelo extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID Vuelo", "Origen", "Destino ", "Fecha", "Hora de Salida", "Duración de Vuelo", "Precio"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -115,14 +221,14 @@ public class BuscarVuelo extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(56, 56, 56)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(63, 63, 63)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(fFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(175, 175, 175)))
@@ -143,7 +249,7 @@ public class BuscarVuelo extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton2)
+                .addComponent(bBuscar)
                 .addGap(91, 91, 91))
         );
         jPanel1Layout.setVerticalGroup(
@@ -164,14 +270,14 @@ public class BuscarVuelo extends javax.swing.JFrame {
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(fFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(27, 27, 27)
-                .addComponent(jButton2)
+                .addComponent(bBuscar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -198,17 +304,43 @@ public class BuscarVuelo extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void fOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fOrigenActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        
+    }//GEN-LAST:event_fOrigenActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void fDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fDestinoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_fDestinoActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
+        String origen = fOrigen.getText().trim();
+        String destino = fDestino.getText().trim();
+        Date fechaSeleccionada = fFecha.getDate();
+        
+        // Validar que los campos no estén vacíos
+        if (origen.isEmpty() || destino.isEmpty() || fechaSeleccionada == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llene todos los campos.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        } 
+        
+        // formatear la fecha al formato sql
+        String fecha;
+        try
+        {
+           SimpleDateFormat formatoOriginal = new SimpleDateFormat("yyyy-MM-dd");
+           String fechaOriginal= formatoOriginal.format(fechaSeleccionada);
+           
+           fecha = FormateadorDeFechas.convertirFecha(fechaOriginal);
+        }
+        catch(Exception e)
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al formatear la fecha.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        //llamar al metodo con los parmetros proporcionados
+        buscarVuelos(origen, destino, fecha);
+    }//GEN-LAST:event_bBuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -246,9 +378,11 @@ public class BuscarVuelo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bBuscar;
+    private javax.swing.JTextField fDestino;
+    private com.toedter.calendar.JDateChooser fFecha;
+    private javax.swing.JTextField fOrigen;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -259,7 +393,11 @@ public class BuscarVuelo extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+
+    private static class PrepearedStatement {
+
+        public PrepearedStatement() {
+        }
+    }
 }

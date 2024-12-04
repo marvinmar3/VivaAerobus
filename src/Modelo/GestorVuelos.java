@@ -17,35 +17,13 @@ import java.sql.ResultSet;
  */
 public class GestorVuelos {
     
-    /*public void guardarVuelo(String origen, String destino, String fechaSalida, String horaSalida,
-       String fechaLlegada, String horaLlegada, double precio) throws SQLException
-    {
-        String sql= "insert into vuelos(origen, destino, fechaSalida, horaSalida, fechaLlegada, horaLlegada, precio) values (?,?,?,?,?,?,?)";
-        
-        Conexion conexion = Conexion.getInstance();
-        
-        try(Connection conn= conexion.getConnection(); PreparedStatement stmt=conn.prepareStatement(sql))
-        {
-            stmt.setString(1, origen);
-            stmt.setString(2, destino);
-            stmt.setString(3, fechaSalida);
-            stmt.setString(4, horaSalida);
-            stmt.setString(5, fechaLlegada);
-            stmt.setString(6, horaLlegada);
-            stmt.setDouble(7, precio);
-            
-            
-            stmt.executeUpdate();
-        }
-                
-    }*/
+   
 
     
     
-    public void guardarVuelo(String origen, String destino, String fechaSalida, String horaSalida,
-       String fechaLlegada, String horaLlegada, double precio) throws SQLException
+    public void guardarVuelo(String origen, String destino, String fechaSalida, String horaSalida, String duracion, double precio) throws SQLException
     {
-        String sql= "insert into vuelos(origen, destino, fechaSalida, horaSalida, fechaLlegada, horaLlegada, precio) values (?,?,?,?,?,?,?)";
+        String sql= "insert into vuelos(origen, destino, fechaSalida, horaSalida, duracionVuelo, precio) values (?,?,?,?,?,?)";
         
         Conexion conexion = new Conexion();
         
@@ -55,9 +33,8 @@ public class GestorVuelos {
             stmt.setString(2, destino);
             stmt.setString(3, fechaSalida);
             stmt.setString(4, horaSalida);
-            stmt.setString(5, fechaLlegada);
-            stmt.setString(6, horaLlegada);
-            stmt.setDouble(7, precio);
+            stmt.setString(5, duracion);
+            stmt.setDouble(6, precio);
             
             
             stmt.executeUpdate();
