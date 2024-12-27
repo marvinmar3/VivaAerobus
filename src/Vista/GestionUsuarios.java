@@ -4,16 +4,26 @@
  */
 package Vista;
 
+import Modelo.ActualizarUsuario;
+import Modelo.CrearUsuario;
+import Modelo.DesactivarUsuario;
 import Modelo.Limpiable;
+import Modelo.Usuario;
+import Modelo.UsuarioAccion;
+import Modelo.UsuarioDAO;
+import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import java.util.List;
+import javax.swing.*;
 
 /**
  *
  * @author marvin
  */
-public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
+public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Validable{
 
     /**
      * Creates new form GestionUsuarios
@@ -21,6 +31,13 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
     public GestionUsuarios() {
         initComponents();
         this.setLocationRelativeTo(null);
+        cargarTiposUsuario(); // para los combobox
+    }
+    
+    private void cargarTiposUsuario()
+    {
+        tipoUs_act.addItem("cliente");
+        tipoUs_act.addItem("administrador");
     }
 
     @Override
@@ -49,6 +66,80 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
         }
        javax.swing.JOptionPane.showMessageDialog(this, "Los campos han sido limpiados.");
     }
+    
+    @Override
+    public boolean validarCampos(List<JComponent> campos)
+    {
+        for (JComponent campo : campos) {
+        if (campo instanceof JTextField) {
+            JTextField textField = (JTextField) campo;
+            if (textField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor completa todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } else if (campo instanceof JPasswordField) {
+            JPasswordField passwordField = (JPasswordField) campo;
+            if (new String(passwordField.getPassword()).isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor completa todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } else if (campo instanceof JComboBox) {
+            JComboBox comboBox = (JComboBox) campo;
+            if (comboBox.getSelectedIndex() == -1 || comboBox.getSelectedItem().toString().isEmpty()) { // Si está en "Seleccione una opción"
+                JOptionPane.showMessageDialog(this, "Por favor selecciona una opción válida.", "Error", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+    }
+    return true;
+    }
+    
+    private void ejecutarAccion(String accion) {
+        UsuarioAccion usuarioAccion;
+
+        switch (accion) {
+            case "Crear Usuario":
+                usuarioAccion = new CrearUsuario(
+                    campoNombre.getText(),
+                    campoApellido.getText(),
+                    campoEmail.getText(),
+                    campoContraseña.getText(),
+                    TipoUsuCrear.getSelectedItem().toString()
+                );
+                usuarioAccion.ejecutar();
+                JOptionPane.showMessageDialog(this, "Usuario creado con éxito", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                limpiarCampos(new JTextField[]{campoNombre, campoApellido, campoEmail, campoContraseña}, null, new JComboBox[]{TipoUsuCrear});
+                break;
+
+            case "Actualizar Usuario":
+                usuarioAccion = new ActualizarUsuario(
+                    Integer.parseInt(id_usu_act.getText()),
+                    nombre_act.getText(),
+                    apellido_act.getText(),
+                    email_act.getText(),
+                    contra_act.getText(),
+                    tipoUs_act.getSelectedItem().toString()
+                );
+                usuarioAccion.ejecutar();
+                JOptionPane.showMessageDialog(this, "Usuario Actualizado con éxito", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                //limpiarCampos(new JTextField[]{campoNombre, campoApellido, campoEmail, campoContraseña}, null, new JComboBox[]{TipoUsuCrear});
+                break;
+
+            case "Desactivar Usuario":
+                usuarioAccion = new DesactivarUsuario(Integer.parseInt(ID_usu_desact.getText()));
+                usuarioAccion.ejecutar();
+                JOptionPane.showMessageDialog(this, "El usuario se ha desactivado exitosamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                limpiarCampos(new JTextField[]{ID_usu_desact, nombre_desact, apellido_desact, email_desact, tipoUsu_desact}, null, new JComboBox[]{});
+                break;
+
+            default:
+                JOptionPane.showMessageDialog(this, "Acción no válida", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+
+        usuarioAccion.ejecutar(); // Ejecuta la acción correspondiente
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,14 +177,14 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
         nombre_act = new javax.swing.JTextField();
         apellido_act = new javax.swing.JTextField();
         email_act = new javax.swing.JTextField();
-        contra_act = new javax.swing.JPasswordField();
         tipoUs_act = new javax.swing.JComboBox<>();
         bActualizarUsuario = new javax.swing.JButton();
         bLimpiar_Act = new javax.swing.JButton();
+        contra_act = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         ID_usu_desact = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        bucasrUsu_desact = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
@@ -104,7 +195,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
         apellido_desact = new javax.swing.JTextField();
         email_desact = new javax.swing.JTextField();
         tipoUsu_desact = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        bDesactUsu = new javax.swing.JButton();
         limpiarDesact = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -243,6 +334,11 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
 
         jButton1.setBackground(new java.awt.Color(0, 153, 0));
         jButton1.setText("Buscar Usuario");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel9.setText("Nombre");
 
@@ -256,6 +352,11 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
 
         bActualizarUsuario.setBackground(new java.awt.Color(0, 153, 0));
         bActualizarUsuario.setText("Actualizar Usuario");
+        bActualizarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bActualizarUsuarioActionPerformed(evt);
+            }
+        });
 
         bLimpiar_Act.setForeground(new java.awt.Color(0, 153, 51));
         bLimpiar_Act.setText("Limpiar");
@@ -289,8 +390,8 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel12)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(contra_act, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(87, 87, 87)
+                                        .addComponent(contra_act, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(86, 86, 86)
                                         .addComponent(bActualizarUsuario))))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -337,16 +438,14 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel11)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(email_act, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(email_act, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(contra_act, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addComponent(jLabel12)
-                                    .addGap(29, 29, 29))
+                                .addComponent(jLabel12)
                                 .addGroup(jPanel3Layout.createSequentialGroup()
                                     .addGap(23, 23, 23)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(contra_act, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(bActualizarUsuario)))))))
+                                    .addComponent(bActualizarUsuario))))))
                 .addGap(46, 46, 46)
                 .addComponent(bLimpiar_Act)
                 .addContainerGap(51, Short.MAX_VALUE))
@@ -356,8 +455,13 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
 
         jLabel14.setText("ID del Usuario");
 
-        jButton2.setBackground(new java.awt.Color(0, 153, 0));
-        jButton2.setText("Buscar Usuario");
+        bucasrUsu_desact.setBackground(new java.awt.Color(0, 153, 0));
+        bucasrUsu_desact.setText("Buscar Usuario");
+        bucasrUsu_desact.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bucasrUsu_desactActionPerformed(evt);
+            }
+        });
 
         jLabel15.setFont(new java.awt.Font("Lantinghei SC", 1, 15)); // NOI18N
         jLabel15.setText("Datos del Usuario...");
@@ -376,8 +480,13 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(0, 153, 51));
-        jButton3.setText("Desactivar Usuario");
+        bDesactUsu.setBackground(new java.awt.Color(0, 153, 51));
+        bDesactUsu.setText("Desactivar Usuario");
+        bDesactUsu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bDesactUsuActionPerformed(evt);
+            }
+        });
 
         limpiarDesact.setForeground(new java.awt.Color(0, 153, 51));
         limpiarDesact.setText("Limpiar");
@@ -400,7 +509,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ID_usu_desact, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(46, 46, 46)
-                        .addComponent(jButton2))
+                        .addComponent(bucasrUsu_desact))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addComponent(jLabel15))
@@ -425,7 +534,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
                                 .addComponent(tipoUsu_desact, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(345, 345, 345)
-                        .addComponent(jButton3)))
+                        .addComponent(bDesactUsu)))
                 .addContainerGap(81, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -439,7 +548,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(ID_usu_desact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(bucasrUsu_desact))
                 .addGap(26, 26, 26)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -457,7 +566,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
                     .addComponent(email_desact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tipoUsu_desact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(52, 52, 52)
-                .addComponent(jButton3)
+                .addComponent(bDesactUsu)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(limpiarDesact)
                 .addGap(50, 50, 50))
@@ -577,7 +686,18 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
     }//GEN-LAST:event_campoNombreActionPerformed
 
     private void GuardarCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarCrearActionPerformed
-        // TODO add your handling code here:
+        List<JComponent> camposCrear = List.of(
+                campoNombre,
+                campoApellido,
+                campoEmail,
+                campoContraseña,
+                TipoUsuCrear
+        );
+        
+        if(validarCampos(camposCrear))
+        {
+            ejecutarAccion("Crear Usuario");
+        }
     }//GEN-LAST:event_GuardarCrearActionPerformed
 
     private void TipoUsuCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TipoUsuCrearActionPerformed
@@ -607,11 +727,95 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
     }//GEN-LAST:event_bLimpiar_ActActionPerformed
 
     private void limpiarDesactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarDesactActionPerformed
-        JTextField[] camposTexto ={ID_usu_desact, nombre_desact, apellido_desact, tipoUsu_desact};
+        JTextField[] camposTexto ={ID_usu_desact, nombre_desact, email_desact, apellido_desact, tipoUsu_desact};
         JDateChooser[] camposFecha ={};
         JComboBox[] comboBoxes ={};
         limpiarCampos(camposTexto, camposFecha, comboBoxes);
     }//GEN-LAST:event_limpiarDesactActionPerformed
+
+    private void bActualizarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bActualizarUsuarioActionPerformed
+        List<JComponent> camposActualizar= List.of(
+                id_usu_act,
+                nombre_act,
+                apellido_act,
+                email_act,
+                contra_act,
+                tipoUs_act
+        );
+        
+        if(validarCampos(camposActualizar))
+        {
+            ejecutarAccion("Actualizar Usuario");
+        }
+    }//GEN-LAST:event_bActualizarUsuarioActionPerformed
+
+    private void bDesactUsuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDesactUsuActionPerformed
+        List<JComponent> camposDesactivar = List.of(ID_usu_desact);
+        
+        if(validarCampos(camposDesactivar))
+        {
+            ejecutarAccion("Desactivar Usuario");
+        }
+    }//GEN-LAST:event_bDesactUsuActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String idTexto = id_usu_act.getText().trim(); // Lee el ID del campo
+
+        // Validar que el ID no esté vacío y sea numérico
+        if (idTexto.isEmpty() || !idTexto.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un ID de usuario válido.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = Integer.parseInt(idTexto); // Convertir el ID a un número entero
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        Usuario usuario = usuarioDAO.buscarPorID(id); // Llama al DAO para buscar el usuario
+
+        if (usuario != null) {
+            // Rellenar los campos con los datos del usuario encontrado
+            nombre_act.setText(usuario.getNombre());
+            apellido_act.setText(usuario.getApellido());
+            email_act.setText(usuario.getEmail());
+            contra_act.setText(usuario.getContraseña());
+            tipoUs_act.setSelectedItem(usuario.getTipoUsuario());
+        } else {
+            // Mostrar mensaje de error si no se encuentra el usuario
+            JOptionPane.showMessageDialog(this, "No se encontró un usuario con el ID proporcionado.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+
+            // Limpiar los campos
+            //limpiarCampos(new JTextField[]{nombre_act, apellido_act, email_act, contra_act}, null, new JComboBox[]{tipoUs_act});
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void bucasrUsu_desactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bucasrUsu_desactActionPerformed
+        String idTexto = ID_usu_desact.getText().trim();
+        
+        // validar que el ID no esté vacío y sea numérico
+        if (idTexto.isEmpty() || !idTexto.matches("\\d+")) 
+        {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un ID de usuario válido.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int id = Integer.parseInt(idTexto); // Convertir el ID a número entero
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        Usuario usuario = usuarioDAO.buscarPorID(id); // Llama al DAO para buscar el usuario
+
+        if (usuario != null) {
+            // Rellenar los campos con los datos del usuario encontrado
+            nombre_desact.setText(usuario.getNombre());
+            apellido_desact.setText(usuario.getApellido());
+            email_desact.setText(usuario.getEmail());
+            tipoUsu_desact.setText(usuario.getTipoUsuario());
+        } else {
+            // Mostrar mensaje si no se encuentra el usuario
+            JOptionPane.showMessageDialog(this, "No se encontró un usuario con el ID proporcionado.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+            // Limpiar los campos
+            limpiarCampos(new JTextField[]{nombre_desact, apellido_desact, email_desact, tipoUsu_desact}, null, null);
+        }
+
+        
+    }//GEN-LAST:event_bucasrUsu_desactActionPerformed
 
     /**
      * @param args the command line arguments
@@ -661,18 +865,18 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable{
     private javax.swing.JTextField apellido_act;
     private javax.swing.JTextField apellido_desact;
     private javax.swing.JButton bActualizarUsuario;
+    private javax.swing.JButton bDesactUsu;
     private javax.swing.JButton bLimpiar_Act;
+    private javax.swing.JButton bucasrUsu_desact;
     private javax.swing.JTextField campoApellido;
     private javax.swing.JTextField campoContraseña;
     private javax.swing.JTextField campoEmail;
     private javax.swing.JTextField campoNombre;
-    private javax.swing.JPasswordField contra_act;
+    private javax.swing.JTextField contra_act;
     private javax.swing.JTextField email_act;
     private javax.swing.JTextField email_desact;
     private javax.swing.JTextField id_usu_act;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
