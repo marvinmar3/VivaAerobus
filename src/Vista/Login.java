@@ -25,21 +25,22 @@ public class Login extends javax.swing.JFrame {
         String email = txtCorreo.getText();
         String contraseña = new String(txtContraseña.getPassword());
 
-        if (!"".equals(email) || !"".equals(contraseña)) 
+        if (email.isEmpty() || contraseña.isEmpty()) 
         {
-            //JOptionPane.showMessageDialog(null, "Por favor, completa todos los campos.");
-            lg = login.log(email, contraseña);
-            if (lg.getEmail() != null && lg.getContraseña() != null) 
-            {
-                Sistema sis = new Sistema();
-                sis.setVisible(true);
-                dispose();
-            }else 
-            {
-                JOptionPane.showMessageDialog(null, "Correo o contraseña incorrectos.");
-            }
+            JOptionPane.showMessageDialog(null, "Por favor, completa todos los campos.");
+            return;
+        }
+        lg = login.log(email, contraseña);
         
-            //return;
+        if(lg.getEmail() != null && lg.getContraseña()!= null)
+        {
+            Sistema sis = new Sistema();
+            sis.setVisible(true);
+            dispose();
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Correo o contraseña incorrectos.");
         }
     }
 

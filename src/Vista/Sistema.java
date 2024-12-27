@@ -96,6 +96,11 @@ public class Sistema extends javax.swing.JFrame {
         jB_promociones.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_promociones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/promo2.png"))); // NOI18N
         jB_promociones.setText("        Promociones");
+        jB_promociones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_promocionesActionPerformed(evt);
+            }
+        });
 
         jB_gestionusuarios.setBackground(new java.awt.Color(204, 204, 204));
         jB_gestionusuarios.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
@@ -211,6 +216,12 @@ public class Sistema extends javax.swing.JFrame {
         fr.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jB_gestionusuarios1ActionPerformed
+
+    private void jB_promocionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_promocionesActionPerformed
+        Promos frmLogin = new Promos();
+        frmLogin.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jB_promocionesActionPerformed
 
     /**
      * @param args the command line arguments

@@ -5,8 +5,10 @@ package Vista;
 import Modelo.Conexion;
 import Modelo.FormateadorDeFechas;
 import Modelo.GestorVuelos;
+import Modelo.Limpiable;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import com.toedter.calendar.JDateChooser;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.sql.Connection;
@@ -15,12 +17,13 @@ import java.sql.ResultSet;
 import java.sql.DriverManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JComboBox;
 
 /**
  *
  * @author marvin
  */
-public class GestionDeVuelos extends javax.swing.JFrame {
+public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
 
     /**
      * Creates new form GestionDeVuelos
@@ -30,76 +33,90 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
     
-    //solo funciona para actualizar vuelo
-    private void LimpiarCampos()
+    // metodo generico para limpiar campos
+    @Override
+    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] comboBoxes)
     {
-        //limpiar los campos de texto
-        fID.setText("");
-        fOrigen1.setText("");
-        fDestino1.setText("");
-        fHoraSalida1.setText("");
-        fDuracion1.setText("");
-        fPrecio1.setText("");
-        
-        //limpiar el componente de fecha
-        jDateChooser3.setDate(null);
-        javax.swing.JOptionPane.showMessageDialog(this,"Los campos han sido limpiados ");
+       if(camposTexto!=null)
+       {
+           for(JTextField campo : camposTexto)
+           {
+               campo.setText("");
+           }
+       }
+       if(camposFecha!= null)
+       {
+           for(JDateChooser campo : camposFecha)
+           {
+               campo.setDate(null);
+           } 
+       }
+       if (comboBoxes != null) 
+       {
+            for (JComboBox combo : comboBoxes) 
+            {
+                combo.setSelectedIndex(0); // Restaura el JComboBox a la primera opción
+            }
+        }
+       javax.swing.JOptionPane.showMessageDialog(this, "Los campos han sido limpiados.");
     }
     
-    private void LimpiarCamposElim()
+    private void limpiarCamposElim()
     {
-        //limpiar los campos de texto
-        fIDElim.setText("");
-        fOrigenElim.setText("");
-        fDestinoElim.setText("");
-        fHoraSalidaElim.setText("");
-        fDuracionElim.setText("");
-        fPrecioElim.setText("");
-        
-        //limpiar el componente de fecha
-        jDateChooser5.setDate(null);
-        javax.swing.JOptionPane.showMessageDialog(this,"Los campos han sido limpiados ");
+        JTextField[] camposTexto = {fIDElim, fOrigenElim, fDestinoElim, fHoraSalidaElim, fDuracionElim, fPrecioElim};
+        JDateChooser[] camposFecha = {jDateChooser5};
+        JComboBox[] comboBoxes = {};
+        limpiarCampos(camposTexto, camposFecha ,comboBoxes);
     }
     
     private void guardarVuelo()
     {
-        String origen = fOrigen.getText();
-        String destino= fDestino.getText();
-        String fechaSalidaOriginal = ((JTextField) jDateChooserSalida.getDateEditor().getUiComponent()).getText();
-        String horaSalida= fHoraSalida.getText();
-        String duracion = fDuracion.getText();
-        double precio = Double.parseDouble(fPrecio.getText());
-        
-        
-        
-        try
-        {
-            String fechaSalida = FormateadorDeFechas.convertirFecha(fechaSalidaOriginal);
-            
-            //guardar el vuelo
+
+        String origen = fOrigen.getText().trim();
+        String destino = fDestino.getText().trim();
+        Date fechaSeleccionada = jDateChooserSalida.getDate();
+        String horaSalida = fHoraSalida.getText().trim();
+        String duracion = fDuracion.getText().trim();
+        String precioTexto = fPrecio.getText().trim();
+
+        //validar que los campos no estén vacíos
+        if (origen.isEmpty() || destino.isEmpty() || fechaSeleccionada == null || horaSalida.isEmpty() || duracion.isEmpty() || precioTexto.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            // Validar que el precio sea un número válido
+            double precio = Double.parseDouble(precioTexto);
+
+            // Formatear la fecha al formato requerido para la base de datos
+            String fechaSalida = FormateadorDeFechas.convertirFecha(fechaSeleccionada);
+
+            // Guardar el vuelo utilizando el gestor de vuelos
             GestorVuelos gestorVuelos = new GestorVuelos();
-            
-            gestorVuelos.guardarVuelo(origen, destino, fechaSalida, horaSalida, duracion , precio);
+            gestorVuelos.guardarVuelo(origen, destino, fechaSalida, horaSalida, duracion, precio);
+
+            // Mostrar mensaje de éxito
             JOptionPane.showMessageDialog(this, "Vuelo guardado con éxito.");
-        }
-        catch(ParseException e)
-        {
-            JOptionPane.showMessageDialog(this, "Error al convertir la fecha: "+ e.getMessage());
-        }
-        catch(SQLException e)
-        {
-            JOptionPane.showMessageDialog(this, "Error al guardar vuelo: "+ e.getMessage());
+
+            // Limpiar los campos del formulario usando la interfaz
+            limpiarCampos(new JTextField[]{fOrigen, fDestino, fHoraSalida, fDuracion, fPrecio}, new JDateChooser[]{jDateChooserSalida}, null);
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El precio debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al guardar el vuelo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     private boolean validarCampos()
     {
-        if (fOrigen.getText().isEmpty() || fDestino.getText().isEmpty() || 
-        ((JTextField) jDateChooserSalida.getDateEditor().getUiComponent()).getText().isEmpty() || 
-        fHoraSalida.getText().isEmpty() || 
-        fDuracion.getText().isEmpty() || 
+        if (fOrigen.getText().isEmpty() ||
+        fDestino.getText().isEmpty() ||
+        ((JTextField) jDateChooserSalida.getDateEditor().getUiComponent()).getText().isEmpty() ||
+        fHoraSalida.getText().isEmpty() ||
+        fDuracion.getText().isEmpty() ||
         fPrecio.getText().isEmpty()) 
         {
-            JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos.");
+            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -136,7 +153,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         duracion = new javax.swing.JLabel();
         fDuracion = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        limpiarNuevo = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         fOrigen1 = new javax.swing.JTextField();
@@ -155,7 +172,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         fID = new javax.swing.JTextField();
         bBuscar = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        limpiarActualizar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
         fIDElim = new javax.swing.JTextField();
@@ -173,7 +190,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         fPrecioElim = new javax.swing.JTextField();
         bEliminar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        limpiarEliminar = new javax.swing.JButton();
         jLabel23 = new javax.swing.JLabel();
         bSalir = new java.awt.Button();
         jLabel7 = new javax.swing.JLabel();
@@ -246,9 +263,14 @@ public class GestionDeVuelos extends javax.swing.JFrame {
 
         jLabel6.setText("Horas");
 
-        jButton3.setBackground(new java.awt.Color(102, 102, 102));
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Limpiar");
+        limpiarNuevo.setBackground(new java.awt.Color(102, 102, 102));
+        limpiarNuevo.setForeground(new java.awt.Color(255, 255, 255));
+        limpiarNuevo.setText("Limpiar");
+        limpiarNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarNuevoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -283,7 +305,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton3)
+                            .addComponent(limpiarNuevo)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jDateChooserSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -329,7 +351,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                                     .addComponent(fDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel6))))
                         .addGap(46, 46, 46)
-                        .addComponent(jButton3)
+                        .addComponent(limpiarNuevo)
                         .addGap(34, 34, 34))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jDateChooserSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -388,12 +410,12 @@ public class GestionDeVuelos extends javax.swing.JFrame {
 
         jLabel12.setText("Horas");
 
-        jButton1.setBackground(new java.awt.Color(102, 102, 102));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Limpiar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        limpiarActualizar.setBackground(new java.awt.Color(102, 102, 102));
+        limpiarActualizar.setForeground(new java.awt.Color(255, 255, 255));
+        limpiarActualizar.setText("Limpiar");
+        limpiarActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                limpiarActualizarActionPerformed(evt);
             }
         });
 
@@ -423,13 +445,12 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel10)
                                 .addGap(120, 120, 120)
-                                .addComponent(jLabel13)
-                                .addGap(70, 70, 70))
+                                .addComponent(jLabel13))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jDateChooser3, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(fHoraSalida1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(46, 46, 46))))
+                                .addComponent(fHoraSalida1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(46, 46, 46))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -451,10 +472,10 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                                 .addComponent(fOrigen1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(fDestino1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(limpiarActualizar)
                 .addGap(38, 38, 38))
         );
         jPanel3Layout.setVerticalGroup(
@@ -497,7 +518,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                     .addComponent(jLabel12)
                     .addComponent(bActualizar))
                 .addGap(79, 79, 79)
-                .addComponent(jButton1)
+                .addComponent(limpiarActualizar)
                 .addGap(52, 52, 52))
         );
 
@@ -539,12 +560,12 @@ public class GestionDeVuelos extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(102, 102, 102));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Limpiar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        limpiarEliminar.setBackground(new java.awt.Color(102, 102, 102));
+        limpiarEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        limpiarEliminar.setText("Limpiar");
+        limpiarEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                limpiarEliminarActionPerformed(evt);
             }
         });
 
@@ -603,7 +624,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                         .addGap(89, 89, 89)
                         .addComponent(bEliminar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)
+                        .addComponent(limpiarEliminar)
                         .addGap(51, 51, 51))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -646,7 +667,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bEliminar)
-                    .addComponent(jButton2))
+                    .addComponent(limpiarEliminar))
                 .addGap(60, 60, 60))
         );
 
@@ -991,7 +1012,7 @@ public class GestionDeVuelos extends javax.swing.JFrame {
                 if(rowsAffected>0)
                 {
                     javax.swing.JOptionPane.showMessageDialog(this, "Vuelo eliminado con éxito.");
-                    LimpiarCamposElim(); // Limpiar los campos del formulario después de eliminar
+                    limpiarCamposElim(); // Limpiar los campos del formulario después de eliminar
                 }
                 else
                 {
@@ -1035,13 +1056,28 @@ public class GestionDeVuelos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_fDuracionActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        LimpiarCampos();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void limpiarActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActualizarActionPerformed
+    JTextField[] camposTexto ={fID, fHoraSalida, fOrigen1, fDestino1, fDuracion1, fPrecio1};
+    JDateChooser[] camposFecha ={jDateChooser3};
+    JComboBox[] comboBoxes = {}; // No hay ComboBox en esta pestaña
+    limpiarCampos(camposTexto, camposFecha, comboBoxes); 
+    
+    }//GEN-LAST:event_limpiarActualizarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        LimpiarCamposElim();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void limpiarEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarEliminarActionPerformed
+
+    JTextField[] camposTexto = {fIDElim, fOrigenElim, fDestinoElim, fHoraSalidaElim, fDuracionElim, fPrecioElim};
+    JDateChooser[] camposFecha = {jDateChooser5};
+    JComboBox[] comboBoxes = {}; // No hay ComboBox en esta pestaña
+    limpiarCampos(camposTexto, camposFecha, comboBoxes);
+    }//GEN-LAST:event_limpiarEliminarActionPerformed
+
+    private void limpiarNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarNuevoActionPerformed
+        JTextField[] camposTexto ={fOrigen, fDestino, fDuracion, fPrecio};
+        JDateChooser[] camposFecha ={jDateChooserSalida};
+        JComboBox[] comboBoxes = {}; // No hay ComboBox en esta pestaña
+        limpiarCampos(camposTexto, camposFecha, comboBoxes);
+    }//GEN-LAST:event_limpiarNuevoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1108,9 +1144,6 @@ public class GestionDeVuelos extends javax.swing.JFrame {
     private javax.swing.JTextField fPrecio;
     private javax.swing.JTextField fPrecio1;
     private javax.swing.JTextField fPrecioElim;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private com.toedter.calendar.JDateChooser jDateChooser3;
     private com.toedter.calendar.JDateChooser jDateChooser5;
     private com.toedter.calendar.JDateChooser jDateChooserSalida;
@@ -1143,5 +1176,8 @@ public class GestionDeVuelos extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton limpiarActualizar;
+    private javax.swing.JButton limpiarEliminar;
+    private javax.swing.JButton limpiarNuevo;
     // End of variables declaration//GEN-END:variables
 }

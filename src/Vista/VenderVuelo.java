@@ -307,7 +307,18 @@ public class VenderVuelo extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       Comprar frmLogin = new Comprar();
+        // obtener los datos del vuelo
+        String origen=jTextField2.getText();
+        String destino = jTextField3.getText();
+        String fechaSalida= jTextField4.getText();
+        String horaSalida= jTextField5.getText();
+        String precio = jTextField6.getText();
+        
+        //abrir la segunda ventana y pasar los datos
+        
+        
+        
+        Comprar frmLogin = new Comprar();
         frmLogin.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed

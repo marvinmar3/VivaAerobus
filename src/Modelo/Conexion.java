@@ -6,29 +6,20 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conexion {
+    private static final String URL = "jdbc:mysql://localhost:3306/Vivaerobus?serverTimezone=UTC";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Martinez230";
     
-    Connection con;
-
-    public static void main(String[] args) {
-        Conexion cn = new Conexion();
-        if(cn.getConnection() != null)
+    //metodo para obtener la conexion
+    public static Connection getConnection()
+    {
+        try
         {
-            System.out.println("Conexion con bd exitosa");
-        }
-        else
+            return DriverManager.getConnection(URL,USER,PASSWORD);
+        }catch(SQLException e)
         {
-            System.out.println("Conexion fallida");
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+            return null;
         }
     }
-    public Connection getConnection()
-    {
-        try{
-            String myBD= "jdbc:mysql://localhost:3306/Vivaerobus?serverTimezone=UTC";
-            con=DriverManager.getConnection(myBD, "root","Martinez230");
-        } catch (SQLException e)
-        {
-            System.out.println("Error al conectar a la base de datos:"+ e.getMessage());
-        }
-        return con;
-    }  
 }

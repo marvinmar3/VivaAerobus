@@ -7,20 +7,10 @@ package Modelo;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-/**
- *
- * @author marvin
- */
+
 public class FormateadorDeFechas {
-    public static String convertirFecha(String fechaOriginal) throws ParseException
-    {
-        SimpleDateFormat formatoOriginal=new SimpleDateFormat("dd MMM yyyy");
-        
-        SimpleDateFormat formatoDeseado= new SimpleDateFormat("yyyy-MM-dd");
-        
-        Date fecha = formatoOriginal.parse(fechaOriginal);
-        
-        return formatoDeseado.format(fecha);
+    public static String convertirFecha(Date fechaOriginal) {
+        SimpleDateFormat formatoSalida = new SimpleDateFormat("yyyy-MM-dd");
+        return formatoSalida.format(fechaOriginal);
     }
-    
 }

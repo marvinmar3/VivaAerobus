@@ -20,15 +20,21 @@ public class LoginDAO {
         login l= new login();
         String sql="select * from Usuarios where email= ? and contraseña= ?";
         
-        Conexion cn = new Conexion();
+        //Conexion cn = new Conexion();
         
         try
         {
-            con= cn.getConnection();
-            ps= con.prepareStatement(sql);
+            con= Conexion.getConnection();
+            if(con==null)
+            {
+                System.out.println("Error, no se pudo establecer la conexión.");
+                return l;
+            }
+            
+            ps = con.prepareStatement(sql);
             ps.setString(1, email);
             ps.setString(2, contraseña);
-            rs=ps.executeQuery();
+            rs = ps.executeQuery();
             
             if(rs.next())
             {
@@ -37,16 +43,11 @@ public class LoginDAO {
                 l.setApellido(rs.getString("apellido"));
                 l.setEmail(rs.getString("email"));
                 l.setContraseña(rs.getString("contraseña"));
-                
             }
         }catch(SQLException e)
         {
             System.out.println("Error al iniciar sesión: " + e.getMessage());
         }
-        /*finally
-        {
-            conexion.closeConnection();
-        }*/
         
         return l;
     }

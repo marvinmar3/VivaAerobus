@@ -4,120 +4,68 @@
  */
 package Vista;
 
-import Modelo.Conexion;
+import Modelo.ConexionDAO;
 import Modelo.FormateadorDeFechas;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.table.DefaultTableModel;
-import java.text.SimpleDateFormat;
 
-/**
- *
- * @author marvin
- */
-public class BuscarVuelo extends javax.swing.JFrame {
+    public class BuscarVuelo extends javax.swing.JFrame {
    
-    private String idVuelo;
-    private String ciudadOrigen;
-    private String ciudadDestino;
-    private String fecha;
-    private String hora;
-    private String precio;
+    private final ConexionDAO dao;
     
-    // conexion a la bd
-    Conexion conexion = new Conexion();
-    Connection cn= conexion.getConnection();
-    
-    
-    private void mostrarDatos()
+    public BuscarVuelo()
     {
-        DefaultTableModel modelo = new DefaultTableModel();
-        modelo.addColumn("ID Vuelo");
-        modelo.addColumn("Origen");
-        modelo.addColumn("Destino");
-        modelo.addColumn("Fecha");
-        modelo.addColumn("Hora");
-        modelo.addColumn("Precio");
-        
-        jTable1.setModel(modelo);
-        
-        String sql = "select id_vuelo, origen, destino, fechaSalida, horaSalida, precio  from vuelos";
-        String[] datos = new String[6];
-        
-        try(Statement st = cn.createStatement();
-        ResultSet rs= st.executeQuery(sql))
-        {
-            while(rs.next())
-            {
-                datos[0]= rs.getString("id_vuelo");
-                datos[0]= rs.getString("origen");
-                datos[0]= rs.getString("destino");
-                datos[0]= rs.getString("fecha");
-                datos[0]= rs.getString("hora");
-                datos[0]= rs.getString("precio");
-                modelo.addRow(datos);
-            }
-            jTable1.setModel(modelo);
-        }
-        catch(SQLException e)
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al obtener los datos: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    // Método para buscar vuelos por filtros
-    private void buscarVuelos(String origen, String destino, String fecha) {
-        DefaultTableModel modelo = new DefaultTableModel();
-        modelo.addColumn("ID Vuelo");
-        modelo.addColumn("Origen");
-        modelo.addColumn("Destino");
-        modelo.addColumn("Fecha");
-        modelo.addColumn("Precio");
-
-        jTable1.setModel(modelo);
-
-        String sql = "SELECT * FROM vuelos WHERE origen = ? AND destino = ? AND fecha = ?";
-        String[] datos = new String[5];
-
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, origen);
-            ps.setString(2, destino);
-            ps.setString(3, fecha);
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                datos[0] = rs.getString("id_vuelo");
-                datos[1] = rs.getString("origen");
-                datos[2] = rs.getString("destino");
-                datos[3] = rs.getString("fecha");
-                datos[4] = rs.getString("precio");
-                modelo.addRow(datos);
-            }
-
-            if (modelo.getRowCount() == 0) {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron vuelos disponibles.", "Sin resultados", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            }
-
-            jTable1.setModel(modelo);
-
-        } catch (SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar vuelos: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    /**
-     * Creates new form BuscarVuelo
-     */
-    public BuscarVuelo() {
         initComponents();
         this.setLocationRelativeTo(null);
+        dao = new ConexionDAO();
         mostrarDatos();
     }
+    
+    private void mostrarDatos() {
+    DefaultTableModel modelo = new DefaultTableModel();
+    modelo.addColumn("ID Vuelo");
+    modelo.addColumn("Origen");
+    modelo.addColumn("Destino");
+    modelo.addColumn("Fecha");
+    modelo.addColumn("Hora");
+    modelo.addColumn("Duración");
+    modelo.addColumn("Precio");
+
+    jTable1.setModel(modelo);
+
+    // Llama al método buscarVuelos sin filtros (todos los registros)
+    ArrayList<String[]> vuelos = dao.buscarVuelos(null, null, null);
+    for (String[] vuelo : vuelos) {
+        modelo.addRow(vuelo);
+    }
+}
+
+    
+    // Método para buscar vuelos por filtros
+    private void buscarVuelos(String origen, String destino, String fechaIngresada) {
+    DefaultTableModel modelo = new DefaultTableModel();
+    modelo.addColumn("ID Vuelo");
+    modelo.addColumn("Origen");
+    modelo.addColumn("Destino");
+    modelo.addColumn("Fecha");
+    modelo.addColumn("Hora");
+    modelo.addColumn("Duración");
+    modelo.addColumn("Precio");
+
+    jTable1.setModel(modelo);
+
+    ArrayList<String[]> vuelos = dao.buscarVuelos(origen, destino, fechaIngresada);
+    for (String[] vuelo : vuelos) {
+        modelo.addRow(vuelo);
+    }
+
+    if (modelo.getRowCount() == 0) {
+        javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron vuelos disponibles.", "Sin resultados", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -288,11 +236,11 @@ public class BuscarVuelo extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -314,37 +262,30 @@ public class BuscarVuelo extends javax.swing.JFrame {
     }//GEN-LAST:event_fDestinoActionPerformed
 
     private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
-        String origen = fOrigen.getText().trim();
-        String destino = fDestino.getText().trim();
-        Date fechaSeleccionada = fFecha.getDate();
-        
-        // Validar que los campos no estén vacíos
-        if (origen.isEmpty() || destino.isEmpty() || fechaSeleccionada == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llene todos los campos.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        } 
-        
-        // formatear la fecha al formato sql
-        String fecha;
-        try
-        {
-           SimpleDateFormat formatoOriginal = new SimpleDateFormat("yyyy-MM-dd");
-           String fechaOriginal= formatoOriginal.format(fechaSeleccionada);
-           
-           fecha = FormateadorDeFechas.convertirFecha(fechaOriginal);
-        }
-        catch(Exception e)
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al formatear la fecha.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        //llamar al metodo con los parmetros proporcionados
-        buscarVuelos(origen, destino, fecha);
+    String origen = fOrigen.getText().trim();
+    String destino = fDestino.getText().trim();
+    Date fechaSeleccionada = fFecha.getDate();
+
+    // Validar que los campos no estén vacíos
+    if (origen.isEmpty() || destino.isEmpty() || fechaSeleccionada == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llene todos los campos.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    } 
+
+    // Convertir la fecha al formato requerido
+    String fecha = FormateadorDeFechas.convertirFecha(fechaSeleccionada);
+
+    // Llamar al método con los parámetros proporcionados
+    buscarVuelos(origen, destino, fecha);
+
+    // Pasar filtros (pueden ser null si están vacíos)
+    //buscarVuelos(origen.isEmpty() ? null : origen, destino.isEmpty() ? null : destino, fecha);
     }//GEN-LAST:event_bBuscarActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -395,9 +336,4 @@ public class BuscarVuelo extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 
-    private static class PrepearedStatement {
-
-        public PrepearedStatement() {
-        }
-    }
 }
