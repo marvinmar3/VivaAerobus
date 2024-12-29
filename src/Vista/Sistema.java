@@ -1,35 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package Vista;
 
-//import java.awt.CardLayout;
-
-/**
- *
- * @author marvin
- */
 public class Sistema extends javax.swing.JFrame {
-
-    /**
-     * Creates new form Sistema
-     */
-   // private CardLayout cardLayout;
-   // private MainPanel mainPanel;
     
     public Sistema() {
         initComponents(); 
         this.setLocationRelativeTo(null);
-        //cardLayout=new CardLayout();
-        //mainPanel=new MainPanel();
-        
-        //Ñdir el mainpanlel al contenedor con cardlayout
-        //jPanel1.setLayout(cardLayout);
-        //jPanel1.add(mainPanel, "mainPanel");
-        
-        //establecer la vista inicial del sistema
-        //cardLayout.show(jPanel1, "mainPanel");
     }
 
     /**
@@ -106,6 +82,11 @@ public class Sistema extends javax.swing.JFrame {
         jB_gestionusuarios.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_gestionusuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionusuarios.png"))); // NOI18N
         jB_gestionusuarios.setText("Gestion de Usuarios");
+        jB_gestionusuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_gestionusuariosActionPerformed(evt);
+            }
+        });
 
         jB_cerrarsesion.setBackground(new java.awt.Color(204, 204, 204));
         jB_cerrarsesion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/cerrarsesion.png"))); // NOI18N
@@ -222,6 +203,12 @@ public class Sistema extends javax.swing.JFrame {
         frmLogin.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jB_promocionesActionPerformed
+
+    private void jB_gestionusuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_gestionusuariosActionPerformed
+        GestionUsuarios fr = new GestionUsuarios();
+        fr.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jB_gestionusuariosActionPerformed
 
     /**
      * @param args the command line arguments
