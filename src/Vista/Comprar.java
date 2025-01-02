@@ -1,6 +1,7 @@
 package Vista;
 
 import Modelo.Conexion;
+import Modelo.GenerarPdf;
 import Modelo.Validable;
 import javax.swing.JOptionPane;
 
@@ -89,7 +90,7 @@ public class Comprar extends javax.swing.JFrame implements Validable{
         precioV1.setForeground(Color.WHITE);
         
     }
-
+ 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -233,7 +234,7 @@ public class Comprar extends javax.swing.JFrame implements Validable{
 
         jLabel22.setText("Método de Pago");
 
-        metpago.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona una opción...", "efectivo", "tarjeta de crédito/débito", "transferencia" }));
+        metpago.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona una opción...", "efectivo", "tarjeta", "transferencia" }));
 
         checkbox1.setLabel("Confirmo que he revisado los detalles de mi vuelo y acepto los términos y condiciones.");
 
@@ -312,7 +313,7 @@ public class Comprar extends javax.swing.JFrame implements Validable{
                                 .addComponent(jLabel19)))
                         .addGap(133, 133, 133)
                         .addComponent(jLabel20)))
-                .addGap(60, 82, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -456,7 +457,7 @@ public class Comprar extends javax.swing.JFrame implements Validable{
                             .addComponent(metpago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(digitos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(bcomprarvuelo))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -604,6 +605,25 @@ public class Comprar extends javax.swing.JFrame implements Validable{
             }
 
             conn.commit();
+            
+            GenerarPdf generador = new GenerarPdf();
+            String rutaEscritorio = System.getProperty("user.home") + "/Desktop"; // Ruta al escritorio
+            String rutaArchivo = rutaEscritorio + "/ticket_compra.pdf"; // Ruta donde se guardará el PDF
+            String cliente = nombreCli.getText() + " " + apellidoCli.getText();
+            String vuelo = origenV1.getText() + " a " + destinoV1.getText();
+            double precioVuelo;
+            try {
+                precio = Double.parseDouble(precioV1.getText().replace(",", "").trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "El precio no es válido. Por favor verifica los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String asientoSelec = asiento.getSelectedItem().toString();
+            String claseSelec = clase.getSelectedItem().toString();
+            
+            generador.generarTicketCompra(rutaArchivo, cliente, vuelo, precio, asientoSelec, claseSelec);
+            
+            
             JOptionPane.showMessageDialog(this, "Compra realizada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
             Sistema sistema = new Sistema();

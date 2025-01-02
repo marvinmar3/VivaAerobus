@@ -115,7 +115,7 @@
                           <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="60" pref="82" max="32767" attributes="0"/>
+                  <EmptySpace min="60" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
@@ -294,7 +294,7 @@
                               <Component id="digitos" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="bcomprarvuelo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="37" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="checkbox1" min="-2" max="-2" attributes="0"/>
@@ -512,7 +512,7 @@
               <StringArray count="4">
                 <StringItem index="0" value="Selecciona una opci&#xf3;n..."/>
                 <StringItem index="1" value="efectivo"/>
-                <StringItem index="2" value="tarjeta de cr&#xe9;dito/d&#xe9;bito"/>
+                <StringItem index="2" value="tarjeta"/>
                 <StringItem index="3" value="transferencia"/>
               </StringArray>
             </Property>

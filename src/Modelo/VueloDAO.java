@@ -5,11 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+/**
+ *
+ * @author marvin
+ */
 public class VueloDAO {
     public Vuelo buscarVueloPorID(int idVuelo) {
         Vuelo vuelo = null;
-        String sql = "SELECT origen, destino, fechaSalida, horaSalida, precio FROM vuelos WHERE id_vuelo = ?";
+        String sql = "SELECT origen, destino, fechaSalida, horaSalida, precio FROM Vuelos WHERE id_vuelo = ?";
         
         try (Connection con = Conexion.getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {

@@ -18,7 +18,7 @@ public class LoginDAO {
     public login log(String email, String contraseña)
     {
         login l= new login();
-        String sql="select * from Usuarios where email= ? and contraseña= ?";
+        String sql="select * from Usuarios where email= ? and contraseña= ? and tipoUsuario = 'administrador' ";
         
         //Conexion cn = new Conexion();
         
@@ -47,6 +47,17 @@ public class LoginDAO {
         }catch(SQLException e)
         {
             System.out.println("Error al iniciar sesión: " + e.getMessage());
+        }finally
+        {
+            try
+            {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (con != null) con.close();
+            }catch(SQLException ex)
+            {
+                System.out.println("Error al cerrar conexiones: " + ex.getMessage());
+            }
         }
         
         return l;

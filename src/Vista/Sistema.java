@@ -57,6 +57,11 @@ public class Sistema extends javax.swing.JFrame {
         jB_boletosreservados.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_boletosreservados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/1731879650055.png"))); // NOI18N
         jB_boletosreservados.setText("Boletos Reservados");
+        jB_boletosreservados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_boletosreservadosActionPerformed(evt);
+            }
+        });
 
         jB_verdervuelo.setBackground(new java.awt.Color(204, 204, 204));
         jB_verdervuelo.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
@@ -209,6 +214,12 @@ public class Sistema extends javax.swing.JFrame {
         fr.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jB_gestionusuariosActionPerformed
+
+    private void jB_boletosreservadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_boletosreservadosActionPerformed
+        BoletosReservados fr = new BoletosReservados();
+        fr.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jB_boletosreservadosActionPerformed
 
     /**
      * @param args the command line arguments

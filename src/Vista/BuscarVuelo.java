@@ -1,70 +1,64 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package Vista;
 
 import Modelo.ConexionDAO;
 import Modelo.FormateadorDeFechas;
-import java.text.SimpleDateFormat;
+import com.toedter.calendar.JDateChooser;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-    public class BuscarVuelo extends javax.swing.JFrame {
+
+public class BuscarVuelo extends javax.swing.JFrame {
    
     private final ConexionDAO dao;
-    
+    private final DefaultTableModel modelo;
+
     public BuscarVuelo()
     {
         initComponents();
         this.setLocationRelativeTo(null);
-        dao = new ConexionDAO();
+        this.dao = new ConexionDAO();
+        
+        modelo = new DefaultTableModel(new Object[]{"ID Vuelo", "Origen", "Destino", "Fecha", "Hora", "Duración", "Precio"}, 0);
+        jTable1.setModel(modelo);
+    
         mostrarDatos();
     }
     
-    private void mostrarDatos() {
-    DefaultTableModel modelo = new DefaultTableModel();
-    modelo.addColumn("ID Vuelo");
-    modelo.addColumn("Origen");
-    modelo.addColumn("Destino");
-    modelo.addColumn("Fecha");
-    modelo.addColumn("Hora");
-    modelo.addColumn("Duración");
-    modelo.addColumn("Precio");
-
-    jTable1.setModel(modelo);
-
-    // Llama al método buscarVuelos sin filtros (todos los registros)
-    ArrayList<String[]> vuelos = dao.buscarVuelos(null, null, null);
-    for (String[] vuelo : vuelos) {
-        modelo.addRow(vuelo);
+    private boolean validarCampos()
+    {
+        if (fOrigen.getText().trim().isEmpty() && 
+        fDestino.getText().trim().isEmpty() && 
+        fFecha.getDate() == null) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, ingrese al menos un filtro.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return false; // Los campos no son válidos
+        }
+        return true; 
     }
-}
-
     
-    // Método para buscar vuelos por filtros
-    private void buscarVuelos(String origen, String destino, String fechaIngresada) {
-    DefaultTableModel modelo = new DefaultTableModel();
-    modelo.addColumn("ID Vuelo");
-    modelo.addColumn("Origen");
-    modelo.addColumn("Destino");
-    modelo.addColumn("Fecha");
-    modelo.addColumn("Hora");
-    modelo.addColumn("Duración");
-    modelo.addColumn("Precio");
-
-    jTable1.setModel(modelo);
-
-    ArrayList<String[]> vuelos = dao.buscarVuelos(origen, destino, fechaIngresada);
-    for (String[] vuelo : vuelos) {
-        modelo.addRow(vuelo);
+    private void mostrarDatos() 
+    {
+        modelo.setRowCount(0); // Limpia las filas existentes
+        ArrayList<String[]> vuelos = dao.buscarVuelos(null, null, null);
+        for (String[] vuelo : vuelos) {
+            modelo.addRow(vuelo);
+        }
     }
+    private void buscarVuelos(String origen, String destino, String fechaIngresada) 
+    {
+        modelo.setRowCount(0); // Limpia las filas existentes
+        ArrayList<String[]> vuelos = dao.buscarVuelos(origen, destino, fechaIngresada);
+        for (String[] vuelo : vuelos) {
+            modelo.addRow(vuelo);
+        }
 
-    if (modelo.getRowCount() == 0) {
-        javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron vuelos disponibles.", "Sin resultados", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        if (modelo.getRowCount() == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron vuelos disponibles.", "Sin resultados", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
     }
-}
 
 
     /**
@@ -262,24 +256,24 @@ import javax.swing.table.DefaultTableModel;
     }//GEN-LAST:event_fDestinoActionPerformed
 
     private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
-    String origen = fOrigen.getText().trim();
-    String destino = fDestino.getText().trim();
-    Date fechaSeleccionada = fFecha.getDate();
-
-    // Validar que los campos no estén vacíos
-    if (origen.isEmpty() || destino.isEmpty() || fechaSeleccionada == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llene todos los campos.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
-    } 
-
-    // Convertir la fecha al formato requerido
-    String fecha = FormateadorDeFechas.convertirFecha(fechaSeleccionada);
-
-    // Llamar al método con los parámetros proporcionados
-    buscarVuelos(origen, destino, fecha);
-
-    // Pasar filtros (pueden ser null si están vacíos)
-    //buscarVuelos(origen.isEmpty() ? null : origen, destino.isEmpty() ? null : destino, fecha);
+    
+        
+        
+        if(!validarCampos())
+        {
+            return;
+        }
+        
+        String origen = fOrigen.getText().trim();
+        String destino = fDestino.getText().trim();
+        String fecha = null;
+        if(fFecha.getDate() != null) 
+        {
+            fecha =FormateadorDeFechas.convertirFecha(fFecha.getDate());
+        }
+        
+        buscarVuelos(origen, destino, fecha);
+    
     }//GEN-LAST:event_bBuscarActionPerformed
 
     /**

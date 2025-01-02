@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Modelo;
 
 /**
@@ -10,16 +7,20 @@ package Modelo;
  */
 public class Reservaciones {
     private int idReservacion;
-    private int idUsuario;
-    private int idVuelo;
-    private String fechaReservacion;
+    private String nombreUsuario;
+    private String emailUsuario;
+    private String origenVuelo;
+    private String destinoVuelo;
+    private String fechaVuelo;
     private String estado;
 
-    public Reservaciones(int idReservacion, int idUsuario, int idVuelo, String fechaReservacion, String estado) {
+    public Reservaciones(int idReservacion, String nombreUsuario,  String emailUsuario, String origenVuelo, String destinoVuelo, String fechaVuelo, String estado) {
         this.idReservacion = idReservacion;
-        this.idUsuario = idUsuario;
-        this.idVuelo = idVuelo;
-        this.fechaReservacion = fechaReservacion;
+        this.nombreUsuario = nombreUsuario;
+        this.emailUsuario = emailUsuario;
+        this.origenVuelo = origenVuelo;
+        this.destinoVuelo = destinoVuelo;
+        this.fechaVuelo = fechaVuelo;
         this.estado = estado;
     }
 
@@ -31,28 +32,44 @@ public class Reservaciones {
         this.idReservacion = idReservacion;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
-    public int getIdVuelo() {
-        return idVuelo;
+    public String getEmailUsuario() {
+        return emailUsuario;
     }
 
-    public void setIdVuelo(int idVuelo) {
-        this.idVuelo = idVuelo;
+    public void setEmailUsuario(String emailUsuario) {
+        this.emailUsuario = emailUsuario;
     }
 
-    public String getFechaReservacion() {
-        return fechaReservacion;
+    public String getOrigenVuelo() {
+        return origenVuelo;
     }
 
-    public void setFechaReservacion(String fechaReservacion) {
-        this.fechaReservacion = fechaReservacion;
+    public void setOrigenVuelo(String origenVuelo) {
+        this.origenVuelo = origenVuelo;
+    }
+
+    public String getDestinoVuelo() {
+        return destinoVuelo;
+    }
+
+    public void setDestinoVuelo(String destinoVuelo) {
+        this.destinoVuelo = destinoVuelo;
+    }
+
+    public String getFechaVuelo() {
+        return fechaVuelo;
+    }
+
+    public void setFechaVuelo(String fechaVuelo) {
+        this.fechaVuelo = fechaVuelo;
     }
 
     public String getEstado() {
@@ -62,6 +79,10 @@ public class Reservaciones {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    
+
+    
     
     
 }

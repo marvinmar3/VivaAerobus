@@ -1057,7 +1057,7 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
     }//GEN-LAST:event_fDuracionActionPerformed
 
     private void limpiarActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActualizarActionPerformed
-    JTextField[] camposTexto ={fID, fHoraSalida, fOrigen1, fDestino1, fDuracion1, fPrecio1};
+    JTextField[] camposTexto ={fID, fHoraSalida1, fOrigen1, fDestino1, fDuracion1, fPrecio1};
     JDateChooser[] camposFecha ={jDateChooser3};
     JComboBox[] comboBoxes = {}; // No hay ComboBox en esta pestaña
     limpiarCampos(camposTexto, camposFecha, comboBoxes); 
