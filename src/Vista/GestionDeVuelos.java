@@ -6,24 +6,23 @@ import Modelo.Conexion;
 import Modelo.FormateadorDeFechas;
 import Modelo.GestorVuelos;
 import Modelo.Limpiable;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.DriverManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JComboBox;
+import java.util.List;
+ import javax.swing.*;
 
 /**
  *
  * @author marvin
  */
-public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
+public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable, Validable{
 
     /**
      * Creates new form GestionDeVuelos
@@ -107,20 +106,27 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
             JOptionPane.showMessageDialog(this, "Error al guardar el vuelo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private boolean validarCampos()
-    {
-        if (fOrigen.getText().isEmpty() ||
-        fDestino.getText().isEmpty() ||
-        ((JTextField) jDateChooserSalida.getDateEditor().getUiComponent()).getText().isEmpty() ||
-        fHoraSalida.getText().isEmpty() ||
-        fDuracion.getText().isEmpty() ||
-        fPrecio.getText().isEmpty()) 
-        {
-            JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
-            return false;
+    @Override
+    public boolean validarCampos(List<JComponent> campos) {
+        for (JComponent campo : campos) {
+            if (campo instanceof JTextField) {
+                JTextField textField = (JTextField) campo;
+                if (textField.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
+                    return false; // Campo vacío encontrado
+                }
+            } else if (campo instanceof JDateChooser) {
+                JDateChooser dateChooser = (JDateChooser) campo;
+                JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
+                if (dateField.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Por favor, seleccione una fecha.", "Error", JOptionPane.WARNING_MESSAGE);
+                    return false; // Campo de fecha vacío
+                }
+            }
         }
-        return true;
+        return true; // Todos los campos son válidos
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -765,9 +771,18 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
     }//GEN-LAST:event_EliminarVueloActionPerformed
 
     private void bGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuardarActionPerformed
-        if(validarCampos())
-        {
-            guardarVuelo();
+        List<JComponent> campos = List.of(
+            fOrigen, 
+            fDestino, 
+            jDateChooserSalida, 
+            fHoraSalida, 
+            fDuracion, 
+            fPrecio
+        );
+
+        // Validar los campos antes de guardar
+        if (validarCampos(campos)) {
+            guardarVuelo(); // Llama al método que guarda el vuelo
         }
         
     }//GEN-LAST:event_bGuardarActionPerformed
@@ -781,36 +796,34 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
     }//GEN-LAST:event_fHoraSalida1ActionPerformed
 
     private void bActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bActualizarActionPerformed
-        // obtener los valores de los campos
+        
+        List<JComponent> campos = List.of(fID, fOrigen1, fDestino1, jDateChooser3, fHoraSalida1, fPrecio1, fDuracion1);
+        
+        if (!validarCampos(campos)) {
+            return;
+        }
+        
         String idVuelo = fID.getText();
         String origen = fOrigen1.getText();
-        
         Date fechaSalida = jDateChooser3.getDate();
-        
         String destino = fDestino1.getText();
         String horaSalida = fHoraSalida1.getText();
         String precioTexto = fPrecio1.getText();
         String duracionVuelo= fDuracion1.getText();
-        
-            //validar los campos esten completos
-            if (idVuelo.isEmpty() || origen.isEmpty() || destino.isEmpty() || fechaSalida == null|| horaSalida.isEmpty() || precioTexto.isEmpty() || duracionVuelo.isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos antes de actualizar.");
-                return;
-            }
 
         try {
-            //convertir la fecha a string
-            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-            String fechaSalidaStr = sdf.format(fechaSalida);
-            
-            double precio = Double.parseDouble(precioTexto); // validar que el precio sea un número
+        // Convertir la fecha a formato String
+        String fechaSalidaStr = FormateadorDeFechas.convertirFecha(fechaSalida);
 
-            // conexión con la base de datos
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Vivaerobus?serverTimezone=UTC", "root", "Martinez230");
-            String sql = "UPDATE vuelos SET origen = ?, destino = ?, fechaSalida = ?, horaSalida = ?, precio = ?, duracionVuelo = ? WHERE id_vuelo = ?";
-            PreparedStatement pst = con.prepareStatement(sql);
+        // Validar que el precio sea un número
+        double precio = Double.parseDouble(precioTexto);
 
-            // asignar valores
+        // Conexión con la base de datos
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement pst = con.prepareStatement(
+                 "UPDATE vuelos SET origen = ?, destino = ?, fechaSalida = ?, horaSalida = ?, precio = ?, duracionVuelo = ? WHERE id_vuelo = ?")) {
+
+            // Asignar valores
             pst.setString(1, origen);
             pst.setString(2, destino);
             pst.setString(3, fechaSalidaStr);
@@ -819,160 +832,101 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable{
             pst.setString(6, duracionVuelo);
             pst.setString(7, idVuelo);
 
-            // ejecutar actualización
+            // Ejecutar actualización
             int rowsAffected = pst.executeUpdate();
 
             if (rowsAffected > 0) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Vuelo actualizado con éxito.");
+                JOptionPane.showMessageDialog(this, "Vuelo actualizado con éxito.");
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró un vuelo con el ID proporcionado.");
+                JOptionPane.showMessageDialog(this, "No se encontró un vuelo con el ID proporcionado.");
             }
-
-            // cerrar recursos
-            pst.close();
-            con.close();
-        } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "El precio debe ser un número válido.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al actualizar el vuelo: " + e.getMessage());
         }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El precio debe ser un número válido.");
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error al actualizar el vuelo: " + e.getMessage());
+    }
         
     }//GEN-LAST:event_bActualizarActionPerformed
 
     private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
-        //obtener el id del vuelo ingresado
-        String idVuelo= fID.getText();
-        //verificar que no esté vacio
-        if(idVuelo.isEmpty())
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor ingrese un ID de vuelo");
+
+        List<JComponent> campos = List.of(fID);
+
+        
+        if (!validarCampos(campos)) {
             return;
         }
         
-        // conexion con la bd
-        Connection con =null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
+        String idVuelo= fID.getText();
         
-        try
-        {
-            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Vivaerobus?serverTimezone=UTC", "root", "Martinez230");
-            
-            String sql= "select origen, destino, fechaSalida, horaSalida, precio, duracionVuelo from vuelos where id_vuelo = ?";
-            pst= con.prepareStatement(sql);
+        try (Connection con = Conexion.getConnection();
+            PreparedStatement pst = con.prepareStatement(
+                 "SELECT origen, destino, fechaSalida, horaSalida, precio, duracionVuelo FROM vuelos WHERE id_vuelo = ?")) {
+
             pst.setString(1, idVuelo);
-            
-            rs=pst.executeQuery();
-            
-            if(rs.next())
-            {
-                //rellena los campos con datos recuperados
-                fOrigen1.setText(rs.getString("origen"));
-                fDestino1.setText(rs.getString("destino"));
-                
-                //convertir la fecha de la bd a date 
-                Date fechaSalidaDate = rs.getDate("fechaSalida");
-                if (fechaSalidaDate != null) {
-                    jDateChooser3.setDate(fechaSalidaDate);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    // Rellenar los campos con datos recuperados
+                    fOrigen1.setText(rs.getString("origen"));
+                    fDestino1.setText(rs.getString("destino"));
+
+                    // Convertir la fecha de la BD a Date
+                    Date fechaSalidaDate = rs.getDate("fechaSalida");
+                    jDateChooser3.setDate(fechaSalidaDate != null ? fechaSalidaDate : null);
+
+                    fHoraSalida1.setText(rs.getString("horaSalida"));
+                    fPrecio1.setText(rs.getString("precio"));
+                    fDuracion1.setText(rs.getString("duracionVuelo"));
                 } else {
-                    jDateChooser3.setDate(null); // Maneja el caso en el que no haya fecha
+                    JOptionPane.showMessageDialog(this, "No se encontró un vuelo con el ID ingresado.");
                 }
-                fHoraSalida1.setText(rs.getString("horaSalida"));
-                fPrecio1.setText(rs.getString("precio"));
-                
-                fDuracion1.setText(rs.getString("duracionVuelo"));
-                
-                
             }
-            else
-            {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró un vuelo con el id ingresado.");
-            }
-        }catch(SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar el vuelo: "+ e.getMessage());
-        }finally
-        {
-            // cerrar conexion y recursos
-            try
-            {
-                if(rs!=null) rs.close();
-                if(pst!=null) pst.close();
-                if(con != null) con.close();
-            }catch(SQLException e)
-            {
-                e.printStackTrace();
-            }
-        }
+            JOptionPane.showMessageDialog(this, "Error al buscar el vuelo: " + e.getMessage());
+        }  
     }//GEN-LAST:event_bBuscarActionPerformed
 
     private void bBuscarElimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarElimActionPerformed
-        //obtener el id del vuelo ingresado
-        String idVuelo= fIDElim.getText();
-        //verificar que no esté vacio
-        if(idVuelo.isEmpty())
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor ingrese un ID de vuelo");
+        
+        List<JComponent> campos = List.of(fIDElim);
+        
+        if (!validarCampos(campos)) {
             return;
         }
+
+
+        String idVuelo= fIDElim.getText();
         
-        // conexion con la bd
-        Connection con =null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-        
-        try
-        {
-            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Vivaerobus?serverTimezone=UTC", "root", "Martinez230");
-            
-            String sql= "select origen, destino, fechaSalida, horaSalida, precio, duracionVuelo from vuelos where id_vuelo = ?";
-            pst= con.prepareStatement(sql);
+        try (Connection con = Conexion.getConnection();
+         PreparedStatement pst = con.prepareStatement(
+             "SELECT origen, destino, fechaSalida, horaSalida, precio, duracionVuelo FROM vuelos WHERE id_vuelo = ?")) {
+
             pst.setString(1, idVuelo);
-            
-            rs=pst.executeQuery();
-            
-            if(rs.next())
-            {
-                //rellena los campos con datos recuperados
-                fOrigenElim.setText(rs.getString("origen"));
-                fDestinoElim.setText(rs.getString("destino"));
-                
-                //convertir la fecha de la bd a date 
-                Date fechaSalidaDate = rs.getDate("fechaSalida");
-                if (fechaSalidaDate != null) {
-                    jDateChooser5.setDate(fechaSalidaDate);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    // Rellenar los campos con datos recuperados
+                    fOrigenElim.setText(rs.getString("origen"));
+                    fDestinoElim.setText(rs.getString("destino"));
+
+                    // Convertir la fecha de la BD a Date
+                    Date fechaSalidaDate = rs.getDate("fechaSalida");
+                    jDateChooser5.setDate(fechaSalidaDate != null ? fechaSalidaDate : null);
+
+                    fHoraSalidaElim.setText(rs.getString("horaSalida"));
+                    fPrecioElim.setText(rs.getString("precio"));
+                    fDuracionElim.setText(rs.getString("duracionVuelo"));
                 } else {
-                    jDateChooser5.setDate(null); // Maneja el caso en el que no haya fecha
+                    JOptionPane.showMessageDialog(this, "No se encontró un vuelo con el ID ingresado.");
                 }
-                fHoraSalidaElim.setText(rs.getString("horaSalida"));
-                fPrecioElim.setText(rs.getString("precio"));
-                
-                fDuracionElim.setText(rs.getString("duracionVuelo"));
-                
-                
             }
-            else
-            {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró un vuelo con el id ingresado.");
-            }
-        }catch(SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar el vuelo: "+ e.getMessage());
-        }finally
-        {
-            // cerrar conexion y recursos
-            try
-            {
-                if(rs!=null) rs.close();
-                if(pst!=null) pst.close();
-                if(con != null) con.close();
-            }catch(SQLException e)
-            {
-                e.printStackTrace();
-            }
+            JOptionPane.showMessageDialog(this, "Error al buscar el vuelo: " + e.getMessage());
         }
     }//GEN-LAST:event_bBuscarElimActionPerformed
 

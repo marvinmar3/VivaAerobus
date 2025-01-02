@@ -10,7 +10,8 @@ import java.sql.SQLException;
 
 public class Reservacion extends FiltrosBase<Reservaciones>{
    
-    public List<Reservaciones> ejecutarConsola()
+    @Override
+    public List<Reservaciones> ejecutarConsulta()
     {
         List<Reservaciones> reservaciones = new ArrayList<>();
         String sql = """
@@ -52,10 +53,5 @@ public class Reservacion extends FiltrosBase<Reservaciones>{
         }
         
         return reservaciones;  
-    }
-
-    @Override
-    public List<Reservaciones> ejecutarConsulta() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -224,7 +224,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Img/gestionusuarios.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Gestion de Usuarios"/>
+            <Property name="text" type="java.lang.String" value="Gesti&#xf3;n de Usuarios"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jB_gestionusuariosActionPerformed"/>
@@ -255,7 +255,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Img/gestionvuelos.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Gestion de Vuelos"/>
+            <Property name="text" type="java.lang.String" value="Gesti&#xf3;n de Vuelos"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jB_gestionusuarios1ActionPerformed"/>

@@ -3,14 +3,17 @@ package Vista;
 
 import Modelo.ConexionDAO;
 import Modelo.FormateadorDeFechas;
+import Modelo.Limpiable;
+import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
 
 
-public class BuscarVuelo extends javax.swing.JFrame {
+public class BuscarVuelo extends javax.swing.JFrame implements Validable, Limpiable{
    
     private final ConexionDAO dao;
     private final DefaultTableModel modelo;
@@ -27,16 +30,64 @@ public class BuscarVuelo extends javax.swing.JFrame {
         mostrarDatos();
     }
     
-    private boolean validarCampos()
-    {
-        if (fOrigen.getText().trim().isEmpty() && 
-        fDestino.getText().trim().isEmpty() && 
-        fFecha.getDate() == null) 
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, ingrese al menos un filtro.", "Error", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return false; // Los campos no son válidos
+    @Override
+    public boolean validarCampos(List<JComponent> campos) {
+        for (JComponent campo : campos) {
+            if (campo instanceof JTextField) {
+                JTextField textField = (JTextField) campo;
+                if (!textField.getText().trim().isEmpty()) {
+                    return true; // Al menos un campo de texto tiene valor
+                }
+            } else if (campo instanceof JDateChooser) {
+                JDateChooser dateChooser = (JDateChooser) campo;
+                if (dateChooser.getDate() != null) {
+                    return true; // Al menos un campo de fecha tiene valor
+                }
+            }
         }
-        return true; 
+
+        // Si no hay campos válidos
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese al menos un campo.", "Error", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+    
+    private void buscarVuelo() 
+    {
+        List<JComponent> campos = new ArrayList<>();
+        campos.add(fOrigen);
+        campos.add(fDestino);
+        campos.add(fFecha);
+
+        if (validarCampos(campos)) {
+            return;
+        }
+    }
+    
+    @Override
+    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] camposCombo)
+    {
+        for (JTextField campo : camposTexto) 
+        {
+            if (campo != null) 
+            {
+                campo.setText("");
+            }
+        }
+
+        for (JDateChooser campo : camposFecha) 
+        {
+            if (campo != null) 
+            {
+                campo.setDate(null);
+            }
+        }
+        for (JComboBox campo : camposCombo) 
+        {
+            if (campo != null) {
+                campo.setSelectedIndex(0); // Seleccionar el primer elemento por defecto
+            }
+        }
+        mostrarDatos();
     }
     
     private void mostrarDatos() 
@@ -85,6 +136,7 @@ public class BuscarVuelo extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
+        limpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -150,63 +202,76 @@ public class BuscarVuelo extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        limpiar.setText("Limpiar");
+        limpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jSeparator1)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(56, 56, 56)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(63, 63, 63)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(175, 175, 175)))
-                        .addGap(62, 62, 62))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel6)
                         .addGap(194, 194, 194)
                         .addComponent(jButton1)
-                        .addGap(37, 37, 37))))
+                        .addGap(37, 37, 37))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(limpiar))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(56, 56, 56)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(fDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(63, 63, 63)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addGap(175, 175, 175)))))
+                        .addGap(62, 62, 62))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 864, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(43, 43, 43)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 864, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(bBuscar)
-                .addGap(91, 91, 91))
+                .addComponent(bBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(129, 129, 129))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(37, 37, 37)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel6))
+                .addGap(28, 28, 28)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel6))
-                        .addGap(28, 28, 28)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -218,9 +283,11 @@ public class BuscarVuelo extends javax.swing.JFrame {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(fOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(27, 27, 27)
-                .addComponent(bBuscar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGap(28, 28, 28)
+                .addComponent(bBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(limpiar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5))
@@ -257,12 +324,10 @@ public class BuscarVuelo extends javax.swing.JFrame {
 
     private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
     
-        
-        
-        if(!validarCampos())
-        {
-            return;
-        }
+        List<JComponent> campos = new ArrayList<>();
+        campos.add(fOrigen);
+        campos.add(fDestino);
+        campos.add(fFecha);
         
         String origen = fOrigen.getText().trim();
         String destino = fDestino.getText().trim();
@@ -272,9 +337,20 @@ public class BuscarVuelo extends javax.swing.JFrame {
             fecha =FormateadorDeFechas.convertirFecha(fFecha.getDate());
         }
         
+        if (!validarCampos(campos)) {
+            return; // Detener si la validación falla
+        }
+        
         buscarVuelos(origen, destino, fecha);
-    
     }//GEN-LAST:event_bBuscarActionPerformed
+
+    private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
+        JTextField[] camposTexto = {fOrigen, fDestino};
+        JDateChooser[] camposFecha = {fFecha};
+        JComboBox[] camposCombo = {};
+        
+        limpiarCampos(camposTexto, camposFecha, camposCombo);
+    }//GEN-LAST:event_limpiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,6 +404,9 @@ public class BuscarVuelo extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton limpiar;
     // End of variables declaration//GEN-END:variables
+
+
 
 }

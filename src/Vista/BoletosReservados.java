@@ -2,13 +2,18 @@
 package Vista;
 
 import Modelo.FormateadorDeFechas;
+import Modelo.Limpiable;
 import Modelo.Reservacion;
 import Modelo.Reservaciones;
+import Modelo.Validable;
+import com.toedter.calendar.JDateChooser;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+ import javax.swing.*;
 
 
-public class BoletosReservados extends javax.swing.JFrame {
+public class BoletosReservados extends javax.swing.JFrame implements Limpiable, Validable{
 
     /**
      * Creates new form BoletosReservados
@@ -32,7 +37,7 @@ public class BoletosReservados extends javax.swing.JFrame {
         filtro.agregarFiltro("Vuelos.destino", destino.getText());
         filtro.agregarFiltro("Vuelos.fechaSalida", fecha.getDate() != null ? FormateadorDeFechas.convertirFecha(fecha.getDate()) : null);
         
-        List<Reservaciones> reservaciones = filtro.ejecutarConsola();
+        List<Reservaciones> reservaciones = filtro.ejecutarConsulta();
 
         DefaultTableModel modeloTabla = (DefaultTableModel) tablaReservaciones.getModel();
         modeloTabla.setRowCount(0); // Limpiar la tabla antes de cargar datos
@@ -51,7 +56,73 @@ public class BoletosReservados extends javax.swing.JFrame {
 
         }
     }
+    
+    private void cargarTablaCompleta() {
+    Reservacion filtro = new Reservacion(); 
+    List<Reservaciones> reservaciones = filtro.ejecutarConsulta();
 
+    DefaultTableModel modeloTabla = (DefaultTableModel) tablaReservaciones.getModel();
+    modeloTabla.setRowCount(0); 
+
+    for (Reservaciones r : reservaciones) {
+        modeloTabla.addRow(new Object[]{
+            r.getIdReservacion(),
+            r.getEstado(),
+            r.getNombreUsuario(),
+            r.getEmailUsuario(),
+            r.getOrigenVuelo(),
+            r.getDestinoVuelo(),
+            r.getFechaVuelo()
+        });
+    }
+}
+    
+    @Override
+    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] camposCombo) {
+        // Limpiar campos de texto
+        for (JTextField campo : camposTexto) {
+            if (campo != null) {
+                campo.setText("");
+            }
+        }
+
+        // Limpiar campos de fecha
+        for (JDateChooser campo : camposFecha) {
+            if (campo != null) {
+                campo.setDate(null);
+            }
+        }
+
+        // Limpiar campos de combo box
+        for (JComboBox campo : camposCombo) {
+            if (campo != null) {
+                campo.setSelectedIndex(0); // Seleccionar el primer elemento por defecto
+            }
+        }
+        
+        cargarTablaCompleta();
+    }
+    @Override
+    public boolean validarCampos(List<JComponent> campos) {
+        for (JComponent campo : campos) {
+            if (campo instanceof JTextField) {
+                JTextField textField = (JTextField) campo;
+                if (!textField.getText().trim().isEmpty()) {
+                    return true; // Al menos un campo de texto tiene valor
+                }
+            } else if (campo instanceof JDateChooser) {
+                JDateChooser dateChooser = (JDateChooser) campo;
+                if (dateChooser.getDate() != null) {
+                    return true; // Al menos un campo de fecha tiene valor
+                }
+            }
+        }
+
+        // Si no hay campos válidos
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese al menos un campo.", "Error", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -74,7 +145,8 @@ public class BoletosReservados extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         fecha = new com.toedter.calendar.JDateChooser();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        buscar = new javax.swing.JButton();
+        limpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -117,10 +189,17 @@ public class BoletosReservados extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Buscar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        buscar.setText("Buscar");
+        buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                buscarActionPerformed(evt);
+            }
+        });
+
+        limpiar.setText("Limpiar");
+        limpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarActionPerformed(evt);
             }
         });
 
@@ -131,6 +210,7 @@ public class BoletosReservados extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 843, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -148,8 +228,9 @@ public class BoletosReservados extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(51, 51, 51)
-                        .addComponent(jButton2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 843, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(limpiar)
+                            .addComponent(buscar))))
                 .addContainerGap(46, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(59, 59, 59)
@@ -177,8 +258,10 @@ public class BoletosReservados extends javax.swing.JFrame {
                                 .addComponent(jLabel4)
                                 .addComponent(destino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel5))
-                            .addComponent(jButton2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                            .addComponent(buscar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(limpiar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -210,9 +293,28 @@ public class BoletosReservados extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
+        List<JComponent> campos = new ArrayList<>();
+        campos.add(nombre);  
+        campos.add(origen);  
+        campos.add(destino);
+        campos.add(fecha);
+        
+        if (!validarCampos(campos)) {
+            return; // Detener si la validación falla
+        }
+        
         BuscarReservaciones();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_buscarActionPerformed
+
+    private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
+        JTextField[] camposTexto = {nombre, origen, destino};
+        JDateChooser[] camposFecha = {fecha};
+        JComboBox[] camposCombo = {}; // Agregar aquí tus JComboBox si los tienes
+
+        // Llamar al método limpiarCampos
+        limpiarCampos(camposTexto, camposFecha, camposCombo);
+    }//GEN-LAST:event_limpiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -250,10 +352,10 @@ public class BoletosReservados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buscar;
     private javax.swing.JTextField destino;
     private com.toedter.calendar.JDateChooser fecha;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -261,6 +363,7 @@ public class BoletosReservados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton limpiar;
     private javax.swing.JTextField nombre;
     private javax.swing.JTextField origen;
     private javax.swing.JTable tablaReservaciones;

@@ -86,7 +86,7 @@ public class Sistema extends javax.swing.JFrame {
         jB_gestionusuarios.setBackground(new java.awt.Color(204, 204, 204));
         jB_gestionusuarios.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_gestionusuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionusuarios.png"))); // NOI18N
-        jB_gestionusuarios.setText("Gestion de Usuarios");
+        jB_gestionusuarios.setText("Gestión de Usuarios");
         jB_gestionusuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_gestionusuariosActionPerformed(evt);
@@ -105,7 +105,7 @@ public class Sistema extends javax.swing.JFrame {
         jB_gestionusuarios1.setBackground(new java.awt.Color(204, 204, 204));
         jB_gestionusuarios1.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_gestionusuarios1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionvuelos.png"))); // NOI18N
-        jB_gestionusuarios1.setText("Gestion de Vuelos");
+        jB_gestionusuarios1.setText("Gestión de Vuelos");
         jB_gestionusuarios1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_gestionusuarios1ActionPerformed(evt);
