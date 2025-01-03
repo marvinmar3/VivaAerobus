@@ -7,21 +7,23 @@ package Modelo;
  */
 public class Reservaciones {
     private int idReservacion;
+    private String estado;
     private String nombreUsuario;
     private String emailUsuario;
     private String origenVuelo;
     private String destinoVuelo;
     private String fechaVuelo;
-    private String estado;
+    
 
-    public Reservaciones(int idReservacion, String nombreUsuario,  String emailUsuario, String origenVuelo, String destinoVuelo, String fechaVuelo, String estado) {
+    public Reservaciones(int idReservacion, String estado, String nombreUsuario,  String emailUsuario, String origenVuelo, String destinoVuelo, String fechaVuelo) {
         this.idReservacion = idReservacion;
+        this.estado = estado;
         this.nombreUsuario = nombreUsuario;
         this.emailUsuario = emailUsuario;
         this.origenVuelo = origenVuelo;
         this.destinoVuelo = destinoVuelo;
         this.fechaVuelo = fechaVuelo;
-        this.estado = estado;
+        
     }
 
     public int getIdReservacion() {
