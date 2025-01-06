@@ -202,7 +202,7 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable, Va
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
 
         NuevoVuelo.setText("Nuevo Vuelo");
         NuevoVuelo.addActionListener(new java.awt.event.ActionListener() {

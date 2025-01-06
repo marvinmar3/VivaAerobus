@@ -143,7 +143,7 @@ public class BuscarVuelo extends javax.swing.JFrame implements Validable, Limpia
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
-        jLabel1.setText("Buscar Vuelo...");
+        jLabel1.setText("Buscar Vuelo");
 
         jButton1.setBackground(new java.awt.Color(0, 153, 0));
         jButton1.setText("Atrás");

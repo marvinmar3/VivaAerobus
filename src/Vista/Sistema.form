@@ -190,7 +190,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Img/book50.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="        Vender Vuelo"/>
+            <Property name="text" type="java.lang.String" value="        Compar Vuelo"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jB_verdervueloActionPerformed"/>

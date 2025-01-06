@@ -78,7 +78,7 @@ public class VenderVuelo extends javax.swing.JFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
-        jLabel2.setText("Comprar Vuelo...");
+        jLabel2.setText("Comprar Vuelo");
 
         destinoV.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -202,7 +202,8 @@ public class Promos extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Salir");
+        jButton3.setBackground(new java.awt.Color(0, 153, 0));
+        jButton3.setText("Atrás");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -1094,58 +1095,72 @@ public class Promos extends javax.swing.JFrame {
 
     private void gdl_GRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_gdl_GRMouseClicked
         abrirVentanaComprar("57");
+        this.dispose();
     }//GEN-LAST:event_gdl_GRMouseClicked
 
     private void cun_GRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cun_GRMouseClicked
         abrirVentanaComprar("58");
+        this.dispose();
     }//GEN-LAST:event_cun_GRMouseClicked
 
     private void mty_GRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mty_GRMouseClicked
         abrirVentanaComprar("55");
+        this.dispose();
     }//GEN-LAST:event_mty_GRMouseClicked
 
     private void cdmx_GRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cdmx_GRMouseClicked
         abrirVentanaComprar("59");
+        this.dispose();
     }//GEN-LAST:event_cdmx_GRMouseClicked
 
     private void vallartaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vallartaMouseClicked
         abrirVentanaComprar("60");
+        this.dispose();
     }//GEN-LAST:event_vallartaMouseClicked
 
     private void meridaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_meridaMouseClicked
         abrirVentanaComprar("61");
+        this.dispose();
     }//GEN-LAST:event_meridaMouseClicked
 
     private void loscabosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loscabosMouseClicked
         abrirVentanaComprar("63");
+        this.dispose();
     }//GEN-LAST:event_loscabosMouseClicked
 
     private void cun_SVMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cun_SVMouseClicked
         abrirVentanaComprar("68");
+        this.dispose();
     }//GEN-LAST:event_cun_SVMouseClicked
 
     private void oax_SVMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oax_SVMouseClicked
         abrirVentanaComprar("69");
+        this.dispose();
     }//GEN-LAST:event_oax_SVMouseClicked
 
     private void tuxtlaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tuxtlaMouseClicked
         abrirVentanaComprar("66");
+        this.dispose();
     }//GEN-LAST:event_tuxtlaMouseClicked
 
     private void huatulcoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_huatulcoMouseClicked
         abrirVentanaComprar("67");
+        this.dispose();
     }//GEN-LAST:event_huatulcoMouseClicked
 
     private void queretaroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_queretaroMouseClicked
         abrirVentanaComprar("72");
+        this.dispose();
     }//GEN-LAST:event_queretaroMouseClicked
 
     private void gdl_MMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_gdl_MMouseClicked
         abrirVentanaComprar("70");
+        this.dispose();
     }//GEN-LAST:event_gdl_MMouseClicked
 
     private void mty_MMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mty_MMouseClicked
         abrirVentanaComprar("71");
+        this.dispose();
     }//GEN-LAST:event_mty_MMouseClicked
 
     private void S_VActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_S_VActionPerformed
@@ -1158,10 +1173,12 @@ public class Promos extends javax.swing.JFrame {
 
     private void mazatlanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mazatlanMouseClicked
         abrirVentanaComprar("62");
+        this.dispose();
     }//GEN-LAST:event_mazatlanMouseClicked
 
     private void cdmx_MMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cdmx_MMouseClicked
         abrirVentanaComprar("73");
+        this.dispose();
     }//GEN-LAST:event_cdmx_MMouseClicked
 
     /**

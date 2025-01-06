@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -25,13 +27,23 @@ import javax.swing.*;
  */
 public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Validable{
 
-    /**
-     * Creates new form GestionUsuarios
-     */
+    private DefaultTableModel modelo;
+    private final UsuarioDAO dao;
+    
     public GestionUsuarios() {
         initComponents();
         this.setLocationRelativeTo(null);
         cargarTiposUsuario(); // para los combobox
+        
+        dao = new UsuarioDAO();
+        inicializarTabla();
+        mostrarDatos();
+    }
+    
+    private void inicializarTabla() {
+        modelo = new DefaultTableModel(
+            new Object[]{"ID Usuario", "Nombre", "Apellido", "Email", "Contraseña", "Tipo de Usuario"}, 0);
+        jTable1.setModel(modelo);
     }
     
     private void cargarTiposUsuario()
@@ -139,6 +151,42 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
 
         usuarioAccion.ejecutar(); // Ejecuta la acción correspondiente
     }
+    
+    private void mostrarDatos() 
+    {
+        modelo.setRowCount(0); // Limpia las filas existentes
+        List<Usuario> usuarios = dao.obtenerUsuarios();
+        for (Usuario usuario : usuarios) {
+            modelo.addRow(new Object[]
+            {
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getApellido(),
+                usuario.getEmail(),
+                usuario.getContraseña(),
+                usuario.getTipoUsuario()
+            });
+        }
+    }
+    private void buscarUsuarios(String nombre, String apellido, String tipoUsuario) 
+    {
+        modelo.setRowCount(0); // Limpia las filas existentes
+        List<Usuario> usuarios = dao.obtenerUsuarios(nombre, apellido, tipoUsuario);
+        for (Usuario usuario : usuarios) {
+            modelo.addRow(new Object[]{
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getApellido(),
+                usuario.getEmail(),
+                usuario.getContraseña(),
+                usuario.getTipoUsuario()
+            });
+        }
+
+        if (modelo.getRowCount() == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se encontraron Usuarios.", "Sin resultados", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -168,7 +216,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
         jPanel3 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         id_usu_act = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        B_ActUs = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
@@ -197,12 +245,17 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
         tipoUsu_desact = new javax.swing.JTextField();
         bDesactUsu = new javax.swing.JButton();
         limpiarDesact = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         SalirGestionUsu = new javax.swing.JButton();
         CrearUsuario = new javax.swing.JButton();
         ActualizarUsuario = new javax.swing.JButton();
         DesactUsuario = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        TablaUsu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -332,11 +385,11 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
             }
         });
 
-        jButton1.setBackground(new java.awt.Color(0, 153, 0));
-        jButton1.setText("Buscar Usuario");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        B_ActUs.setBackground(new java.awt.Color(0, 153, 0));
+        B_ActUs.setText("Buscar Usuario");
+        B_ActUs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                B_ActUsActionPerformed(evt);
             }
         });
 
@@ -378,7 +431,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
                         .addGap(18, 18, 18)
                         .addComponent(id_usu_act, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(37, 37, 37)
-                        .addComponent(jButton1))
+                        .addComponent(B_ActUs))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -418,7 +471,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(id_usu_act, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(B_ActUs))
                 .addGap(53, 53, 53)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9)
@@ -574,6 +627,38 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
 
         GestionUsuarios.addTab("Desactivar Usuario", jPanel4);
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(66, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(90, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(83, 83, 83))
+        );
+
+        GestionUsuarios.addTab("Usuarios", jPanel5);
+
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
         jLabel1.setText("Gestión de Usuarios");
 
@@ -606,6 +691,15 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
             }
         });
 
+        jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/gestionusuarios.png"))); // NOI18N
+
+        TablaUsu.setText("Usuarios");
+        TablaUsu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TablaUsuActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -615,12 +709,15 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(CrearUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ActualizarUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(DesactUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(DesactUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(TablaUsu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(GestionUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 772, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(16, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(126, 126, 126)
+                .addGap(59, 59, 59)
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(SalirGestionUsu)
@@ -629,23 +726,31 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(SalirGestionUsu))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(SalirGestionUsu))
+                        .addGap(14, 14, 14))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
                         .addComponent(GestionUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
+                        .addGap(129, 129, 129)
                         .addComponent(CrearUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42)
+                        .addGap(18, 18, 18)
                         .addComponent(ActualizarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39)
-                        .addComponent(DesactUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(DesactUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(TablaUsu, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -758,7 +863,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
         }
     }//GEN-LAST:event_bDesactUsuActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void B_ActUsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_ActUsActionPerformed
         String idTexto = id_usu_act.getText().trim(); // Lee el ID del campo
 
         // Validar que el ID no esté vacío y sea numérico
@@ -785,7 +890,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
             // Limpiar los campos
             //limpiarCampos(new JTextField[]{nombre_act, apellido_act, email_act, contra_act}, null, new JComboBox[]{tipoUs_act});
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_B_ActUsActionPerformed
 
     private void bucasrUsu_desactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bucasrUsu_desactActionPerformed
         String idTexto = ID_usu_desact.getText().trim();
@@ -816,6 +921,10 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
 
         
     }//GEN-LAST:event_bucasrUsu_desactActionPerformed
+
+    private void TablaUsuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TablaUsuActionPerformed
+        GestionUsuarios.setSelectedIndex(3);
+    }//GEN-LAST:event_TablaUsuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -854,6 +963,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActualizarUsuario;
+    private javax.swing.JButton B_ActUs;
     private javax.swing.JButton CrearUsuario;
     private javax.swing.JButton DesactUsuario;
     private javax.swing.JTabbedPane GestionUsuarios;
@@ -861,6 +971,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
     private javax.swing.JTextField ID_usu_desact;
     private javax.swing.JButton LimpiarCrear;
     private javax.swing.JButton SalirGestionUsu;
+    private javax.swing.JButton TablaUsu;
     private javax.swing.JComboBox<String> TipoUsuCrear;
     private javax.swing.JTextField apellido_act;
     private javax.swing.JTextField apellido_desact;
@@ -876,7 +987,6 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
     private javax.swing.JTextField email_act;
     private javax.swing.JTextField email_desact;
     private javax.swing.JTextField id_usu_act;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -889,6 +999,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -900,8 +1011,11 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JButton limpiarDesact;
     private javax.swing.JTextField nombre_act;
     private javax.swing.JTextField nombre_desact;

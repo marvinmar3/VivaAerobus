@@ -7,11 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CrearUsuario extends UsuarioAccion{
-    private String nombre;
-    private String apellido;
-    private String email;
-    private String contraseña;
-    private String tipoUsuario;
+    private final String nombre;
+    private final String apellido;
+    private final String email;
+    private final String contraseña;
+    private final String tipoUsuario;
     
     public CrearUsuario(String nombre, String apellido, String email, String contraseña, String tipoUsuario)
     {

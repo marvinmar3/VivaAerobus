@@ -6,6 +6,7 @@ public class Sistema extends javax.swing.JFrame {
     public Sistema() {
         initComponents(); 
         this.setLocationRelativeTo(null);
+        setTitle("Viva Aerobus");
     }
 
     /**
@@ -66,7 +67,7 @@ public class Sistema extends javax.swing.JFrame {
         jB_verdervuelo.setBackground(new java.awt.Color(204, 204, 204));
         jB_verdervuelo.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
         jB_verdervuelo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/book50.png"))); // NOI18N
-        jB_verdervuelo.setText("        Vender Vuelo");
+        jB_verdervuelo.setText("        Compar Vuelo");
         jB_verdervuelo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_verdervueloActionPerformed(evt);

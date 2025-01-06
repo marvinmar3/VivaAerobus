@@ -182,6 +182,7 @@ public class BoletosReservados extends javax.swing.JFrame implements Limpiable, 
 
         jLabel5.setText("Fecha");
 
+        jButton1.setBackground(new java.awt.Color(0, 153, 0));
         jButton1.setText("Atrás");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -189,6 +190,7 @@ public class BoletosReservados extends javax.swing.JFrame implements Limpiable, 
             }
         });
 
+        buscar.setBackground(new java.awt.Color(0, 153, 0));
         buscar.setText("Buscar");
         buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

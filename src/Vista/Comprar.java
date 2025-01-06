@@ -246,6 +246,7 @@ public class Comprar extends javax.swing.JFrame implements Validable{
             }
         });
 
+        bcomprarvuelo.setBackground(new java.awt.Color(0, 153, 0));
         bcomprarvuelo.setText("Comprar Vuelo");
         bcomprarvuelo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -540,11 +541,6 @@ public class Comprar extends javax.swing.JFrame implements Validable{
         String metodoPago= metpago.getSelectedItem().toString();
         String ultimosDigitos = digitos.getText().isEmpty() ? null : digitos.getText();
         
-        //detalles del vuelo
-        /*String origen = origenV1.getText();
-        String destino = destinoV1.getText();
-        String fechaSalida = fechaV1.getText();
-        String horaSalida = horaV1.getText();*/
         double precio = Double.parseDouble(precioV1.getText());
         
         try (Connection conn = Conexion.getConnection()) {
