@@ -2,11 +2,10 @@
 
 package Vista;
 
+import Modelo.BaseFrame;
 import Modelo.Conexion;
 import Modelo.FormateadorDeFechas;
 import Modelo.GestorVuelos;
-import Modelo.Limpiable;
-import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -21,7 +20,7 @@ import java.util.List;
  *
  * @author marvin
  */
-public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable, Validable{
+public class GestionDeVuelos extends BaseFrame{
 
     /**
      * Creates new form GestionDeVuelos
@@ -31,33 +30,6 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable, Va
         this.setLocationRelativeTo(null);
     }
     
-    // metodo generico para limpiar campos
-    @Override
-    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] comboBoxes)
-    {
-       if(camposTexto!=null)
-       {
-           for(JTextField campo : camposTexto)
-           {
-               campo.setText("");
-           }
-       }
-       if(camposFecha!= null)
-       {
-           for(JDateChooser campo : camposFecha)
-           {
-               campo.setDate(null);
-           } 
-       }
-       if (comboBoxes != null) 
-       {
-            for (JComboBox combo : comboBoxes) 
-            {
-                combo.setSelectedIndex(0); // Restaura el JComboBox a la primera opción
-            }
-        }
-       javax.swing.JOptionPane.showMessageDialog(this, "Los campos han sido limpiados.");
-    }
     
     private void limpiarCamposElim()
     {
@@ -104,26 +76,6 @@ public class GestionDeVuelos extends javax.swing.JFrame implements Limpiable, Va
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al guardar el vuelo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-    @Override
-    public boolean validarCampos(List<JComponent> campos) {
-        for (JComponent campo : campos) {
-            if (campo instanceof JTextField) {
-                JTextField textField = (JTextField) campo;
-                if (textField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
-                    return false; // Campo vacío encontrado
-                }
-            } else if (campo instanceof JDateChooser) {
-                JDateChooser dateChooser = (JDateChooser) campo;
-                JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
-                if (dateField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Por favor, seleccione una fecha.", "Error", JOptionPane.WARNING_MESSAGE);
-                    return false; // Campo de fecha vacío
-                }
-            }
-        }
-        return true; // Todos los campos son válidos
     }
     
 

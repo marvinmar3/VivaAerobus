@@ -1,10 +1,9 @@
 
 package Vista;
 
+import Modelo.BaseFrame;
 import Modelo.ConexionDAO;
 import Modelo.FormateadorDeFechas;
-import Modelo.Limpiable;
-import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.*;
 
 
-public class BuscarVuelo extends javax.swing.JFrame implements Validable, Limpiable{
+public class BuscarVuelo extends BaseFrame{
    
     private final ConexionDAO dao;
     private final DefaultTableModel modelo;
@@ -47,48 +46,10 @@ public class BuscarVuelo extends javax.swing.JFrame implements Validable, Limpia
         }
 
         // Si no hay campos válidos
-        JOptionPane.showMessageDialog(this, "Por favor, ingrese al menos un campo.", "Error", JOptionPane.WARNING_MESSAGE);
         return false;
     }
     
-    private void buscarVuelo() 
-    {
-        List<JComponent> campos = new ArrayList<>();
-        campos.add(fOrigen);
-        campos.add(fDestino);
-        campos.add(fFecha);
-
-        if (validarCampos(campos)) {
-            return;
-        }
-    }
     
-    @Override
-    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] camposCombo)
-    {
-        for (JTextField campo : camposTexto) 
-        {
-            if (campo != null) 
-            {
-                campo.setText("");
-            }
-        }
-
-        for (JDateChooser campo : camposFecha) 
-        {
-            if (campo != null) 
-            {
-                campo.setDate(null);
-            }
-        }
-        for (JComboBox campo : camposCombo) 
-        {
-            if (campo != null) {
-                campo.setSelectedIndex(0); // Seleccionar el primer elemento por defecto
-            }
-        }
-        mostrarDatos();
-    }
     
     private void mostrarDatos() 
     {
@@ -338,6 +299,7 @@ public class BuscarVuelo extends javax.swing.JFrame implements Validable, Limpia
         }
         
         if (!validarCampos(campos)) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese al menos un campo.", "Error", JOptionPane.WARNING_MESSAGE);
             return; // Detener si la validación falla
         }
         
@@ -350,6 +312,7 @@ public class BuscarVuelo extends javax.swing.JFrame implements Validable, Limpia
         JComboBox[] camposCombo = {};
         
         limpiarCampos(camposTexto, camposFecha, camposCombo);
+        mostrarDatos();
     }//GEN-LAST:event_limpiarActionPerformed
 
     /**

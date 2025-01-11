@@ -1,8 +1,8 @@
 package Vista;
 
+import Modelo.BaseFrame;
 import Modelo.Conexion;
 import Modelo.GenerarPdf;
-import Modelo.Validable;
 import javax.swing.JOptionPane;
 
 import java.awt.Color;
@@ -19,39 +19,12 @@ import java.sql.Statement;
  *
  * @author marvin
  */
-public class Comprar extends javax.swing.JFrame implements Validable{
+public class Comprar extends BaseFrame{
 
     private String idVuelo;
 
     private Comprar() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public boolean validarCampos(List<JComponent> campos)
-    {
-        for (JComponent campo : campos) {
-            if (campo instanceof JTextField) {
-                JTextField textField = (JTextField) campo;
-                if (textField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos obligatorios.", "Error", JOptionPane.WARNING_MESSAGE);
-                    return false;
-                }
-            } else if (campo instanceof JComboBox) {
-                JComboBox<?> comboBox = (JComboBox<?>) campo;
-                if (comboBox.getSelectedIndex() == 0) { // Verificar que no esté en "Seleccione una opción"
-                    JOptionPane.showMessageDialog(this, "Por favor, selecciona una opción válida.", "Error", JOptionPane.WARNING_MESSAGE);
-                    return false;
-                }
-            } else if (campo instanceof JCheckBox) {
-                JCheckBox checkBox = (JCheckBox) campo;
-                if (!checkBox.isSelected()) {
-                    JOptionPane.showMessageDialog(this, "Por favor, confirma los términos y condiciones.", "Error", JOptionPane.WARNING_MESSAGE);
-                    return false;
-                }
-            }
-        }
-        return true;
     }
     /**
      * Creates new form Comprar

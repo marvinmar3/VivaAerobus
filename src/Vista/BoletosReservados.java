@@ -1,11 +1,10 @@
 
 package Vista;
 
+import Modelo.BaseFrame;
 import Modelo.FormateadorDeFechas;
-import Modelo.Limpiable;
 import Modelo.Reservacion;
 import Modelo.Reservaciones;
-import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
  import javax.swing.*;
 
 
-public class BoletosReservados extends javax.swing.JFrame implements Limpiable, Validable{
+public class BoletosReservados extends BaseFrame{
 
     /**
      * Creates new form BoletosReservados
@@ -77,31 +76,7 @@ public class BoletosReservados extends javax.swing.JFrame implements Limpiable, 
     }
 }
     
-    @Override
-    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] camposCombo) {
-        // Limpiar campos de texto
-        for (JTextField campo : camposTexto) {
-            if (campo != null) {
-                campo.setText("");
-            }
-        }
-
-        // Limpiar campos de fecha
-        for (JDateChooser campo : camposFecha) {
-            if (campo != null) {
-                campo.setDate(null);
-            }
-        }
-
-        // Limpiar campos de combo box
-        for (JComboBox campo : camposCombo) {
-            if (campo != null) {
-                campo.setSelectedIndex(0); // Seleccionar el primer elemento por defecto
-            }
-        }
-        
-        cargarTablaCompleta();
-    }
+    
     @Override
     public boolean validarCampos(List<JComponent> campos) {
         for (JComponent campo : campos) {
@@ -316,6 +291,7 @@ public class BoletosReservados extends javax.swing.JFrame implements Limpiable, 
 
         // Llamar al método limpiarCampos
         limpiarCampos(camposTexto, camposFecha, camposCombo);
+        cargarTablaCompleta();
     }//GEN-LAST:event_limpiarActionPerformed
 
     /**

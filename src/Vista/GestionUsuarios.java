@@ -5,13 +5,12 @@
 package Vista;
 
 import Modelo.ActualizarUsuario;
+import Modelo.BaseFrame;
 import Modelo.CrearUsuario;
 import Modelo.DesactivarUsuario;
-import Modelo.Limpiable;
 import Modelo.Usuario;
 import Modelo.UsuarioAccion;
 import Modelo.UsuarioDAO;
-import Modelo.Validable;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -25,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author marvin
  */
-public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Validable{
+public class GestionUsuarios extends BaseFrame{
 
     private DefaultTableModel modelo;
     private final UsuarioDAO dao;
@@ -51,60 +50,7 @@ public class GestionUsuarios extends javax.swing.JFrame implements Limpiable, Va
         tipoUs_act.addItem("cliente");
         tipoUs_act.addItem("administrador");
     }
-
-    @Override
-    public void limpiarCampos(JTextField[] camposTexto, JDateChooser[] camposFecha, JComboBox[] comboBoxes)
-    {
-        if(camposTexto!=null)
-       {
-           for(JTextField campo : camposTexto)
-           {
-               campo.setText("");
-           }
-       }
-       if(camposFecha!= null)
-       {
-           for(JDateChooser campo : camposFecha)
-           {
-               campo.setDate(null);
-           } 
-       }
-       if (comboBoxes != null) 
-       {
-            for (JComboBox comboBox : comboBoxes) 
-            {
-                comboBox.setSelectedIndex(0); // Suponiendo que el índice 0 es "Seleccione una opción..."
-            }
-        }
-       javax.swing.JOptionPane.showMessageDialog(this, "Los campos han sido limpiados.");
-    }
     
-    @Override
-    public boolean validarCampos(List<JComponent> campos)
-    {
-        for (JComponent campo : campos) {
-        if (campo instanceof JTextField) {
-            JTextField textField = (JTextField) campo;
-            if (textField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Por favor completa todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        } else if (campo instanceof JPasswordField) {
-            JPasswordField passwordField = (JPasswordField) campo;
-            if (new String(passwordField.getPassword()).isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Por favor completa todos los campos.", "Error", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        } else if (campo instanceof JComboBox) {
-            JComboBox comboBox = (JComboBox) campo;
-            if (comboBox.getSelectedIndex() == -1 || comboBox.getSelectedItem().toString().isEmpty()) { // Si está en "Seleccione una opción"
-                JOptionPane.showMessageDialog(this, "Por favor selecciona una opción válida.", "Error", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        }
-    }
-    return true;
-    }
     
     private void ejecutarAccion(String accion) {
         UsuarioAccion usuarioAccion;
